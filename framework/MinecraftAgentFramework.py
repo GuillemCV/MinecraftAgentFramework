@@ -1,22 +1,25 @@
 import mcpi.minecraft as minecraft
 import mcpi.block as block
 
+
 class MinecraftAgent:
     """
-    Clase base para agentes de Minecraft que proporciona funcionalidades básicas
-    para interactuar con el servidor de Minecraft.
+    Clase base de la que heredan todos los agentes de Minecraft.
     """
 
-    def __init__(self, name="Agent"):
+    def __init__(self, name, state, mc):
         """
-        Inicializa un nuevo agente de Minecraft.
+        Inicializa un agente con un nombre y un estado inicial.
 
-        :param name: Nombre del agente (opcional).
+        :param name: Nombre del agente.
+        :param state: Estado inicial del agente.
+        :param mc: Instancia de Minecraft para interactuar con el servidor.
         """
         self.name = name
-        self.mc = minecraft.Minecraft.create()
+        self.state = state
+        self.mc = mc
 
-    def send_message(self, message):
+    def send_message(self, message: str):
         """
         Envía un mensaje al chat de Minecraft.
 
@@ -24,9 +27,17 @@ class MinecraftAgent:
         """
         self.mc.postToChat(f"{self.name}: {message}")
 
-    def move_to(self, x, y, z):
+    def receive_message(self) -> str:
         """
-        Mueve al agente a una posición específica.
+        Lee el último mensaje del chat de Minecraft.
+
+        :return: Último mensaje del chat.
+        """
+        return self.mc.events.pollChatPosts()[-1].message
+
+    def move_player(self, x, y, z):
+        """
+        Mueve el jugador a una posición específica.
 
         :param x: Coordenada X.
         :param y: Coordenada Y.
@@ -55,6 +66,7 @@ class MinecraftAgent:
         """
         self.mc.setBlock(x, y, z, block.AIR.id)
 
+
 class MinecraftFramework:
     """
     Framework principal para gestionar y coordinar agentes en un servidor de Minecraft.
@@ -82,12 +94,3 @@ class MinecraftFramework:
         """
         for agent in self.agents:
             agent.send_message(message)
-
-    def run_all(self):
-        """
-        Método para ejecutar las tareas principales de todos los agentes.
-
-        Nota: Este método debe ser sobrescrito por subclases o por el usuario.
-        """
-        for agent in self.agents:
-            agent.send_message("Listo para interactuar con el mundo de Minecraft!")
