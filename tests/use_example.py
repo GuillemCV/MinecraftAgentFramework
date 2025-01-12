@@ -11,19 +11,19 @@ framework = MinecraftFramework(mc)
 agent1 = MinecraftAgent(name="Agente1", active=True, mc=mc)
 agent2 = MinecraftAgent(name="Agente2", active=False, mc=mc)
 agent3 = MinecraftAgent(name="Agente1", active=True, mc=mc)
+agent4 = MinecraftAgent(name="Agente4", active=True, mc=mc)
 
 # Añadir los agentes al framework
 framework.add_agent(agent1)
 framework.add_agent(agent2)
 framework.add_agent(agent3)
-
-# Mostrar los agentes en el chat
-framework.show_agents()
+framework.add_agent(agent4)
 
 # Eliminar un agente
 framework.remove_agent("Agente8")
-framework.remove_agent("Agente1")
+framework.remove_agent("Agente2")
 
 # Enviar un mensaje desde todos los agentes activos
-framework.broadcast_message("¡Hola desde el framework de agentes!")
+framework.broadcast_message("Hola desde el framework de agentes!")
 
+framework.show_agents()

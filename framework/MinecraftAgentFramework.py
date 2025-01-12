@@ -1,8 +1,5 @@
 import datetime
-from sys import _int_info
-import mcpi.minecraft as minecraft
-import mcpi.block as block
-
+from .mcpi import block
 
 class MinecraftAgent:
     """
@@ -165,8 +162,7 @@ class MinecraftFramework:
         Muestra en el chat los nombres de todos los agentes
         y su estado actual.
         """
-
-        msg = "Agentes:\n"
+        msg = "Agentes disponibles:"
         if len(self.agents) == 0:
             self.__write_chat(msg + "No hay agentes disponibles")
         else:
@@ -174,5 +170,8 @@ class MinecraftFramework:
                 lambda a: (a.name, "Activo") if a.active else (a.name, "Inactivo"),
                 self.agents,
             )
-            msg += "\n".join([f"{name} - {active}" for name, active in name_active])
+            
             self.__write_chat(msg)
+            for name, status in name_active:
+                self.__write_chat(f"{name} - {status}")
+            
