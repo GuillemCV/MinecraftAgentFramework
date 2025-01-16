@@ -1,5 +1,7 @@
 import datetime
+import inspect
 from .mcpi import block
+
 
 class MinecraftAgent:
     """
@@ -34,9 +36,9 @@ class MinecraftAgent:
         """
         return self.mc.events.pollChatPosts()[-1].message
 
-    def move_player(self, x, y, z):
+    def tp_player(self, x, y, z):
         """
-        Mueve el jugador a una posición específica.
+        Teletransporta al jugador a una posición específica.
 
         :param x: Coordenada X.
         :param y: Coordenada Y.
@@ -53,7 +55,7 @@ class MinecraftAgent:
         :param y: Coordenada Y.
         :param z: Coordenada Z.
         """
-        self.mc.setBlock(x, y, z, block_type)
+        self.mc.setBlock(x, y, z, block_type.id)
 
     def destroy_block(self, x, y, z):
         """
@@ -64,6 +66,66 @@ class MinecraftAgent:
         :param z: Coordenada Z.
         """
         self.mc.setBlock(x, y, z, block.AIR.id)
+
+    def show_methods(self):
+        """
+        Muestra en el chat los métodos de la clase y sus parámetros.
+        """
+
+        # Se obtienen los métodos de la clase
+        methods = self.get_methods_names()
+
+        # Se obtienen los parámetros de cada método usando inspect
+        methods_params = []
+        for method in methods:
+            method_obj = getattr(self, method)
+            params = inspect.signature(method_obj).parameters
+            methods_params.append(", ".join(params.keys()))
+
+        # Se muestra en el chat el nombre de los métodos y sus parámetros
+        self.send_message("Metodos disponibles:")
+        [self.send_message(f"- {method}({params})") for method, params in zip(methods, methods_params)]
+
+    def get_methods_names(self):
+        """
+        Devuelve los nombres de los métodos de la clase.
+
+        :return: Lista con los nombres de los métodos.
+        """
+        return [method for method in dir(self) if callable(getattr(self, method)) and not method.startswith("__")]
+
+    def execute(self, *args):
+        """
+        Template method para ejecutar un agente.
+
+        :param args: Argumentos que se pasan al método principal.
+        """
+        # Se ejecutan el metodo ini_execute
+        self.ini_execute()
+
+        # Se ejecuta el método principal
+        self.main_execute(*args)
+
+        # Se ejecuta el método end_execute
+        self.end_execute()
+
+    def ini_execute(self):
+        """
+        Método que se ejecuta al inicio de la ejecución del agente.
+        """
+        self.send_message("Ejecutando ...")
+
+    def main_execute(self, *args):
+        """
+        Método principal de la ejecución del agente.
+        """
+        pass
+
+    def end_execute(self):
+        """
+        Método que se ejecuta al final de la ejecución del agente.
+        """
+        self.send_message("Fin de la ejecución")
 
 
 class MinecraftFramework:
@@ -90,7 +152,7 @@ class MinecraftFramework:
         date = datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S")
         print(f"{date} [Agent Framework]: {message}")
 
-    def __write_chat(self, message):
+    def write_chat(self, message):
         """
         Escribe un mensaje en el chat de Minecraft.
 
@@ -98,7 +160,7 @@ class MinecraftFramework:
         """
         self.mc.postToChat(f"[Agent Framework]: {message}")
 
-    def __read_chat(self) -> str:
+    def read_chat(self) -> str:
         """
         Lee el último mensaje del chat de Minecraft.
 
@@ -150,9 +212,7 @@ class MinecraftFramework:
 
         # Si no hay agentes activos, se muestra un mensaje en el chat.
         if len(active_agents) == 0:
-            self.__write_chat(
-                "No hay agentes activos disponibles para enviar el mensaje"
-            )
+            self.write_chat("No hay agentes activos disponibles para enviar el mensaje")
         else:
             # Si hay agentes activos, se envía el mensaje desde cada uno.
             [agent.send_message(message) for agent in active_agents]
@@ -164,14 +224,13 @@ class MinecraftFramework:
         """
         msg = "Agentes disponibles:"
         if len(self.agents) == 0:
-            self.__write_chat(msg + "No hay agentes disponibles")
+            self.write_chat(msg + "No hay agentes disponibles")
         else:
             name_active = map(
                 lambda a: (a.name, "Activo") if a.active else (a.name, "Inactivo"),
                 self.agents,
             )
-            
-            self.__write_chat(msg)
+
+            self.write_chat(msg)
             for name, status in name_active:
-                self.__write_chat(f"{name} - {status}")
-            
+                self.write_chat(f"{name} - {status}")

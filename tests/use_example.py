@@ -1,5 +1,6 @@
 from framework.MinecraftAgentFramework import MinecraftAgent, MinecraftFramework
 import framework.mcpi.minecraft as minecraft
+import framework.mcpi.block as block
 
 # Conectar al servidor de Minecraft
 mc = minecraft.Minecraft.create()
@@ -27,3 +28,5 @@ framework.remove_agent("Agente2")
 framework.broadcast_message("Hola desde el framework de agentes!")
 
 framework.show_agents()
+
+agent1.show_methods()
