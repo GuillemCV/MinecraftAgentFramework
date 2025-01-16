@@ -174,7 +174,7 @@ class MinecraftFramework:
 
         :param agent: Instancia de MinecraftAgent o una clase hija.
         """
-        # Si ya existe un agente con el mismo nombre, se muestra un mensaje de error.
+        # Si ya existe un agente con el mismo nombre, se muestra un mensaje de error. 
         if len(list(filter(lambda a: a.name == agent.name, self.agents))) > 0:
             self.__print_info(
                 f"No se puede añadir el agente {agent.name} porque ya existe otro con el mismo nombre"
