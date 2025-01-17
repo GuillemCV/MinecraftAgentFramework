@@ -20,6 +20,41 @@ class MinecraftAgent:
         self.active = active
         self.mc = mc
 
+        self.executable_methods = []
+        """
+        Lista de nombres de métodos que se pueden ejecutar mediante comandos desde el chat de Minecraft
+        a través del framework.
+        """
+
+        # Marcamos el decorador non_executable como no ejecutable
+        self.non_executable.non_executable = True
+
+        # Se obtienen los métodos ejecutables
+        for method_name in dir(self):
+            # Si es un metodo y no empieza por __
+            if callable(getattr(self, method_name)) and not method_name.startswith("__"):
+                method = getattr(self, method_name)
+                if not getattr(method, "non_executable", False):
+                    self.executable_methods.append(method_name)
+
+
+    def non_executable(self, method):
+        """
+        Decorador para marcar un método como no ejecutable mediante comandos desde el chat de Minecraft.
+
+        :param method: Método a decorar.
+        :return: Método decorado.
+        """
+
+        # Se añade un atributo al método para marcarlo como no ejecutable.
+        method.non_executable = True
+
+        # Se devuelve el método original.
+        return method
+
+    # Métodos para interactuar con el servidor de Minecraft:
+
+    @non_executable
     def send_message(self, message: str):
         """
         Envía un mensaje al chat de Minecraft.
@@ -28,6 +63,7 @@ class MinecraftAgent:
         """
         self.mc.postToChat(f"[{self.name}]: {message}")
 
+    @non_executable
     def receive_message(self) -> str:
         """
         Lee el último mensaje del chat de Minecraft.
@@ -36,6 +72,7 @@ class MinecraftAgent:
         """
         return self.mc.events.pollChatPosts()[-1].message
 
+    @non_executable
     def tp_player(self, x, y, z):
         """
         Teletransporta al jugador a una posición específica.
@@ -46,6 +83,7 @@ class MinecraftAgent:
         """
         self.mc.player.setTilePos(x, y, z)
 
+    @non_executable
     def place_block(self, block_type, x, y, z):
         """
         Coloca un bloque en una posición específica.
@@ -57,6 +95,7 @@ class MinecraftAgent:
         """
         self.mc.setBlock(x, y, z, block_type.id)
 
+    @non_executable
     def destroy_block(self, x, y, z):
         """
         Destruye un bloque en una posición específica.
@@ -67,9 +106,13 @@ class MinecraftAgent:
         """
         self.mc.setBlock(x, y, z, block.AIR.id)
 
+    # Métodos para obtener y mostrar los métodos de la clase que se pueden ejecutar
+    # mediante comandos desde el chat de Minecraft:
+
     def show_methods(self):
         """
-        Muestra en el chat los métodos de la clase y sus parámetros.
+        Muestra en el chat los métodos que se pueden ejecutar mediante comandos
+        desde el chat de Minecraft y sus parámetros.
         """
 
         # Se obtienen los métodos de la clase
@@ -86,13 +129,17 @@ class MinecraftAgent:
         self.send_message("Metodos disponibles:")
         [self.send_message(f"- {method}({params})") for method, params in zip(methods, methods_params)]
 
-    def get_methods_names(self):
+    @non_executable
+    def get_methods_names(self) -> list:
         """
-        Devuelve los nombres de los métodos de la clase.
+        Devuelve el atributo executable_methods.
 
-        :return: Lista con los nombres de los métodos.
+        :return: Lista con los nombres de los métodos que se pueden ejecutar
+        mediante comandos desde el chat de Minecraft.
         """
-        return [method for method in dir(self) if callable(getattr(self, method)) and not method.startswith("__")]
+        return self.executable_methods
+
+    # Métodos para ejecutar un agente:
 
     def execute(self, *args):
         """
@@ -109,18 +156,21 @@ class MinecraftAgent:
         # Se ejecuta el método end_execute
         self.end_execute()
 
+    @non_executable
     def ini_execute(self):
         """
         Método que se ejecuta al inicio de la ejecución del agente.
         """
-        self.send_message("Ejecutando ...")
+        self.send_message("Ejecutando...")
 
+    @non_executable
     def main_execute(self, *args):
         """
         Método principal de la ejecución del agente.
         """
         pass
-
+    
+    @non_executable
     def end_execute(self):
         """
         Método que se ejecuta al final de la ejecución del agente.
