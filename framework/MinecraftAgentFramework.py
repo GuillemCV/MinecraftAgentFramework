@@ -2,6 +2,19 @@ import datetime
 import inspect
 from .mcpi import block
 
+def non_executable(method):
+    """
+    Decorador para marcar un método como no ejecutable mediante comandos desde el chat de Minecraft.
+
+    :param method: Método a decorar.
+    :return: Método decorado.
+    """
+
+    # Se añade un atributo al método para marcarlo como no ejecutable.
+    method.non_executable = True
+
+    # Se devuelve el método original.
+    return method
 
 class MinecraftAgent:
     """
@@ -26,9 +39,6 @@ class MinecraftAgent:
         a través del framework.
         """
 
-        # Marcamos el decorador non_executable como no ejecutable
-        self.non_executable.non_executable = True
-
         # Se obtienen los métodos ejecutables
         for method_name in dir(self):
             # Si es un metodo y no empieza por __
@@ -36,21 +46,6 @@ class MinecraftAgent:
                 method = getattr(self, method_name)
                 if not getattr(method, "non_executable", False):
                     self.executable_methods.append(method_name)
-
-
-    def non_executable(self, method):
-        """
-        Decorador para marcar un método como no ejecutable mediante comandos desde el chat de Minecraft.
-
-        :param method: Método a decorar.
-        :return: Método decorado.
-        """
-
-        # Se añade un atributo al método para marcarlo como no ejecutable.
-        method.non_executable = True
-
-        # Se devuelve el método original.
-        return method
 
     # Métodos para interactuar con el servidor de Minecraft:
 
@@ -217,6 +212,16 @@ class MinecraftFramework:
         :return: Último mensaje del chat.
         """
         return self.mc.events.pollChatPosts()[-1].message
+    
+    def search_agent(self, agent_name: str) -> MinecraftAgent:
+        """
+        Busca un agente por su nombre.
+
+        :param agent_name: Nombre del agente a buscar.
+        :return: Instancia del agente si se encuentra, None en caso contrario.
+        """
+        result = list(filter(lambda a: a.name == agent_name, self.agents))
+        return result[0] if len(result) > 0 else None
 
     def add_agent(self, agent: MinecraftAgent):
         """
@@ -225,7 +230,7 @@ class MinecraftFramework:
         :param agent: Instancia de MinecraftAgent o una clase hija.
         """
         # Si ya existe un agente con el mismo nombre, se muestra un mensaje de error. 
-        if len(list(filter(lambda a: a.name == agent.name, self.agents))) > 0:
+        if self.search_agent(agent.name):
             self.__print_info(
                 f"No se puede añadir el agente {agent.name} porque ya existe otro con el mismo nombre"
             )
@@ -241,8 +246,7 @@ class MinecraftFramework:
         :param agent_name: Nombre del agente a eliminar.
         """
         # Se busca el agente por su nombre.
-        result = list(filter(lambda a: a.name == agent_name, self.agents))
-        agent = result[0] if len(result) > 0 else None
+        agent = self.search_agent(agent_name)
 
         # Si existe el agente, se elimina de la lista.
         if agent:
@@ -251,36 +255,29 @@ class MinecraftFramework:
         else:
             self.__print_info(f"No se ha encontrado el agente {agent_name}")
 
-    def broadcast_message(self, message):
+    def say_hi(self):
         """
-        Envía un mensaje al chat desde todos los agentes activos.
-
-        :param message: Mensaje a enviar.
+        Todos los agentes activos envían un mensaje al chat de Minecraft.
         """
         # Se filtran los agentes activos.
         active_agents = list(filter(lambda a: a.active, self.agents))
 
         # Si no hay agentes activos, se muestra un mensaje en el chat.
         if len(active_agents) == 0:
-            self.write_chat("No hay agentes activos disponibles para enviar el mensaje")
+            self.write_chat("No hay agentes activos disponibles")
         else:
-            # Si hay agentes activos, se envía el mensaje desde cada uno.
-            [agent.send_message(message) for agent in active_agents]
+            # Si hay agentes activos, se envía un mensaje desde cada uno.
+            [agent.send_message("Hola !!!") for agent in active_agents]
 
     def show_agents(self):
         """
         Muestra en el chat los nombres de todos los agentes
         y su estado actual.
         """
-        msg = "Agentes disponibles:"
+        self.write_chat("Agentes disponibles:")
         if len(self.agents) == 0:
-            self.write_chat(msg + "No hay agentes disponibles")
+            self.write_chat("No hay agentes disponibles")
         else:
-            name_active = map(
-                lambda a: (a.name, "Activo") if a.active else (a.name, "Inactivo"),
-                self.agents,
-            )
+            name_active = map(lambda a: (a.name, "Activo") if a.active else (a.name, "Inactivo"), self.agents,)
+            [self.write_chat(f"- {name} ({status})") for name, status in name_active]
 
-            self.write_chat(msg)
-            for name, status in name_active:
-                self.write_chat(f"{name} - {status}")

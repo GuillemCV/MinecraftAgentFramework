@@ -3,9 +3,10 @@ import framework.mcpi.minecraft as minecraft
 import framework.mcpi.block as block
 
 # Conectar al servidor de Minecraft
-mc = minecraft.Minecraft.create()
+#mc = minecraft.Minecraft.create()
 
 # Crear una instancia del framework
+mc = None
 framework = MinecraftFramework(mc)
 
 # Crear algunos agentes
@@ -25,8 +26,9 @@ framework.remove_agent("Agente8")
 framework.remove_agent("Agente2")
 
 # Enviar un mensaje desde todos los agentes activos
-framework.broadcast_message("Hola desde el framework de agentes!")
+#framework.broadcast_message("Hola desde el framework de agentes!")
 
-framework.show_agents()
+#framework.show_agents()
 
-agent1.show_methods()
+agent1_method = agent1.get_methods_names()
+[print(f"Agente1: {method}") for method in agent1_method]
