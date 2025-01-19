@@ -1,6 +1,7 @@
 from framework.MinecraftAgentFramework import MinecraftAgent, MinecraftFramework
 import framework.mcpi.minecraft as minecraft
 import framework.mcpi.block as block
+from agents.TntAgent import TntAgent
 
 # Conectar al servidor de Minecraft
 #mc = minecraft.Minecraft.create()
@@ -14,6 +15,7 @@ agent1 = MinecraftAgent(name="Agente1", active=True, mc=mc)
 agent2 = MinecraftAgent(name="Agente2", active=False, mc=mc)
 agent3 = MinecraftAgent(name="Agente1", active=True, mc=mc)
 agent4 = MinecraftAgent(name="Agente4", active=True, mc=mc)
+agent_tnt = TntAgent(name="TntAgent", active=True, mc=mc)
 
 # Añadir los agentes al framework
 framework.add_agent(agent1)
@@ -30,5 +32,5 @@ framework.remove_agent("Agente2")
 
 #framework.show_agents()
 
-agent1_method = agent1.get_methods_names()
-[print(f"Agente1: {method}") for method in agent1_method]
+agent_tnt_methods = agent_tnt.get_methods_names()
+[print(f"Agente1: {method}") for method in agent_tnt_methods]
