@@ -4,6 +4,7 @@ import inspect
 from .mcpi import block
 from .mcpi.minecraft import Minecraft
 
+
 def non_executable(method):
     """
     Decorador para marcar un método como no ejecutable mediante comandos desde el chat de Minecraft.
@@ -43,10 +44,12 @@ class MinecraftAgent:
 
         # Se obtienen los métodos ejecutables
         for method_name in dir(self):
-            # Si es un metodo y no empieza por __
-            if callable(getattr(self, method_name)) and not method_name.startswith("__"):
+            # Si el nombre no empieza por __
+            if not method_name.startswith("__"):
                 method = getattr(self, method_name)
-                if not getattr(method, "non_executable", False):
+                # Si es un método y no es no ejecutable
+                if callable(method) and not hasattr(method, "non_executable"):
+                    # Se añade a la lista de métodos ejecutables
                     self.executable_methods.append(method_name)
 
     # Métodos para interactuar con el servidor de Minecraft:
@@ -187,10 +190,26 @@ class MinecraftAgent:
         """
         self.send_message("Fin de la ejecución")
 
+def command(cmd : str):
+    """
+    Decorador para asociar un comando con un método del framework.
+
+    :param cmd: Comando que se debe escribir en el chat para ejecutar el método.
+    :return: Método decorado.
+    """
+    def decorator(method):
+        # Se añade un atributo al método para asociar el comando.
+        method.command = cmd
+
+        # Se devuelve el método original.
+        return method
+
+    return decorator
 
 class MinecraftFramework:
     """
-    Framework principal para gestionar y coordinar agentes en un servidor de Minecraft.
+    Framework principal que procesa los comandos escritos en el chat de Minecraft
+    y ejecuta los métodos correspondientes de los agentes registrados.
     """
 
     def __init__(self, mc: Minecraft):
@@ -200,9 +219,20 @@ class MinecraftFramework:
 
         :param mc: Instancia de Minecraft para interactuar con el servidor.
         """
-        self.agents = []
-        self.commands = {}
+        self.agents = []  # Lista de agentes registrados en el framework.
         self.mc = mc
+        self.commands = {} # Diccionario de comandos y sus métodos asociados.
+
+        # Se inicializan los comandos y los métodos asociados.
+        for method_name in dir(self):
+            # Si el nombre no empieza por __
+            if not method_name.startswith("__"):
+                method = getattr(self, method_name)
+                # Si es un método y tiene el atributo command
+                if callable(method) and hasattr(method, "command"):
+                    # Se añade al diccionario de comandos
+                    self.commands[method.command] = method
+                
 
     def __print_info(self, message):
         """
@@ -274,6 +304,7 @@ class MinecraftFramework:
         else:
             self.__print_info(f"No se ha encontrado el agente {agent_name}")
 
+    @command("sayhi")
     def say_hi(self):
         """
         Todos los agentes activos envían un mensaje al chat de Minecraft.
@@ -289,6 +320,7 @@ class MinecraftFramework:
             # Si hay agentes activos, se envía un mensaje desde cada uno.
             [agent.send_message("Hola !!!") for agent in active_agents]
 
+    @command("shagents")
     def show_agents(self):
         """
         Muestra en el chat los nombres de todos los agentes
@@ -301,11 +333,45 @@ class MinecraftFramework:
             name_active = map(lambda a: (a.name, "Activo") if a.active else (a.name, "Inactivo"), self.agents,)
             [self.write_chat(f"- {name} ({status})") for name, status in name_active]
 
+    @command("help")
+    def help(self):
+        """
+        Muestra en el chat los comandos disponibles y los argumentos que aceptan.
+        """
+        self.write_chat("Comandos disponibles:")
+        [self.write_chat(f"- {cmd}") for cmd in self.commands.keys()]
+
+        # FALTA MOSTRAR LOS ARGUMENTOS DE CADA COMANDO
+    
+    @command("chstate")
+    def change_agent_state(self, agent_name: str):
+        """
+        Cambia el estado de un agente de activo a inactivo o viceversa.
+
+        :param agent_name: Nombre del agente a cambiar el estado.
+        """
+        agent = self.search_agent(agent_name)
+        if agent:
+            agent.active = not agent.active
+            status = "Activo" if agent.active else "Inactivo"
+            msg = f"El agente {agent_name} ahora está {status}"
+            self.write_chat(msg) # Se muestra un mensaje en el chat.
+            self.__print_info(msg) # Se muestra un mensaje en la consola.
+        else:
+            self.write_chat(f"No se ha encontrado el agente {agent_name}")
+
+    # faltan els metodes show_methods i execute_agent i execute_method
+
     def run(self):
         """
         Método principal para ejecutar el framework. Consiste en un bucle infinito
         que lee los mensajes del chat y ejecuta los comandos correspondientes.
         """
+
+        msg = "Framework de agentes iniciado. Usa el prefijo 'af: ' para ejecutar comandos."
+        self.__print_info(msg)
+        self.write_chat(msg)
+
         while True:
             # Se lee el último mensaje del chat.
             message = self.read_chat()
@@ -341,3 +407,4 @@ class MinecraftFramework:
 
             # Esperar un segundo para no saturar el servidor.
             time.sleep(1)
+
