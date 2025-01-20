@@ -1,6 +1,8 @@
 import datetime
+import time
 import inspect
 from .mcpi import block
+from .mcpi.minecraft import Minecraft
 
 def non_executable(method):
     """
@@ -21,7 +23,7 @@ class MinecraftAgent:
     Clase base de la que heredan todos los agentes de Minecraft.
     """
 
-    def __init__(self, name: str, active: bool, mc):
+    def __init__(self, name: str, active: bool, mc: Minecraft):
         """
         Inicializa un agente con un nombre y un estado inicial.
 
@@ -61,11 +63,15 @@ class MinecraftAgent:
     @non_executable
     def receive_message(self) -> str:
         """
-        Lee el último mensaje del chat de Minecraft.
+        Lee el último mensaje del chat de Minecraft. 
+        Si no hay mensajes, devuelve una cadena vacía.
 
-        :return: Último mensaje del chat.
+        :return: Último mensaje del chat o cadena vacía.
         """
-        return self.mc.events.pollChatPosts()[-1].message
+        # Se obtienen los eventos del chat
+        list = self.mc.events.pollChatPosts()
+        # Si hay mensajes, se devuelve el último. Si no, una cadena vacía.
+        return list[-1].message if len(list) > 0 else ""
 
     @non_executable
     def tp_player(self, x, y, z):
@@ -77,6 +83,15 @@ class MinecraftAgent:
         :param z: Coordenada Z.
         """
         self.mc.player.setTilePos(x, y, z)
+
+    @non_executable
+    def get_player_pos(self) -> tuple:
+        """
+        Obtiene la posición actual del jugador.
+
+        :return: Tupla con las coordenadas X, Y, Z.
+        """
+        return self.mc.player.getTilePos()
 
     @non_executable
     def place_block(self, block_type, x, y, z):
@@ -178,7 +193,7 @@ class MinecraftFramework:
     Framework principal para gestionar y coordinar agentes en un servidor de Minecraft.
     """
 
-    def __init__(self, mc):
+    def __init__(self, mc: Minecraft):
         """
         Inicializa el framework con una lista de agentes vacía, un diccionario de comandos vacío
         y una instancia de Minecraft.
@@ -207,11 +222,15 @@ class MinecraftFramework:
 
     def read_chat(self) -> str:
         """
-        Lee el último mensaje del chat de Minecraft.
+        Lee el último mensaje del chat de Minecraft. 
+        Si no hay mensajes, devuelve una cadena vacía.
 
-        :return: Último mensaje del chat.
+        :return: Último mensaje del chat o cadena vacía.
         """
-        return self.mc.events.pollChatPosts()[-1].message
+        # Se obtienen los eventos del chat
+        list = self.mc.events.pollChatPosts()
+        # Si hay mensajes, se devuelve el último. Si no, una cadena vacía.
+        return list[-1].message if len(list) > 0 else ""
     
     def search_agent(self, agent_name: str) -> MinecraftAgent:
         """
@@ -258,6 +277,7 @@ class MinecraftFramework:
     def say_hi(self):
         """
         Todos los agentes activos envían un mensaje al chat de Minecraft.
+        Es útil para comprobar des del chat que agentes están activos.
         """
         # Se filtran los agentes activos.
         active_agents = list(filter(lambda a: a.active, self.agents))
@@ -281,3 +301,43 @@ class MinecraftFramework:
             name_active = map(lambda a: (a.name, "Activo") if a.active else (a.name, "Inactivo"), self.agents,)
             [self.write_chat(f"- {name} ({status})") for name, status in name_active]
 
+    def run(self):
+        """
+        Método principal para ejecutar el framework. Consiste en un bucle infinito
+        que lee los mensajes del chat y ejecuta los comandos correspondientes.
+        """
+        while True:
+            # Se lee el último mensaje del chat.
+            message = self.read_chat()
+
+            # Si empieza por "af: ", se considera un comando del framework.
+            if message.startswith("af: "):
+                # Se obtiene el comando y los argumentos.
+                command = message.split(" ")[1]
+                args = message.split(" ")[2:]
+
+                # Si el comando es "show_agents", se muestran los agentes.
+                if command == "show_agents":
+                    self.show_agents()
+
+                # Si el comando es "say_hi", se envía un mensaje desde todos los agentes activos.
+                elif command == "say_hi":
+                    self.say_hi()
+
+                # Si el comando es "show_methods", se muestran los métodos de un agente.
+                elif command == "show_methods":
+                    agent_name = args[0]
+                    agent = self.search_agent(agent_name)
+                    if agent:
+                        agent.show_methods()
+                    else:
+                        self.write_chat(f"No se ha encontrado el agente {agent_name}")
+
+                # Si el comando es "execute", se ejecuta un agente.
+            else:
+                # No se hace nada si el mensaje no empieza por "af: ". 
+                # Ya que no es un comando del framework.
+                pass
+
+            # Esperar un segundo para no saturar el servidor.
+            time.sleep(1)
