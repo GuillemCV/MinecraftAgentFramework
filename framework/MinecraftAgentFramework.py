@@ -224,10 +224,9 @@ class MinecraftFramework:
                 method = getattr(self, method_name)
                 # Si es un método y tiene el atributo command
                 if callable(method) and hasattr(method, "command"):
-                    # Se añade al diccionario de comandos
-                    self.commands[method.command] = method
+                    # Se añade al diccionario de comandos junto con sus parámetros
+                    self.commands[method.command] = (method, inspect.signature(method).parameters)
                 
-
     def __print_info(self, message):
         """
         Escribir un mensaje informativo en la consola con la fecha y hora actuales
@@ -333,10 +332,9 @@ class MinecraftFramework:
         Muestra en el chat los comandos disponibles y los argumentos que aceptan.
         """
         self.write_chat("Comandos disponibles:")
-        [self.write_chat(f"- {cmd}") for cmd in self.commands.keys()]
+        for cmd, (method, params) in self.commands.items():
+            self.write_chat(f"- {cmd} ({', '.join(params.keys())})")
 
-        # FALTA MOSTRAR LOS ARGUMENTOS DE CADA COMANDO
-    
     @command("chstate")
     def change_agent_state(self, agent_name: str):
         """
@@ -354,7 +352,63 @@ class MinecraftFramework:
         else:
             self.write_chat(f"No se ha encontrado el agente {agent_name}")
 
-    # faltan els metodes show_methods i execute_agent i execute_method
+    @command("shmethods")
+    def show_methods(self, agent_name: str):
+        """
+        Muestra en el chat los métodos del agente que se pueden ejecutar mediante comandos
+        desde el chat de Minecraft y sus parámetros.
+
+        :param agent_name: Nombre del agente.
+        """
+        agent = self.search_agent(agent_name)
+        if agent:
+            agent.show_methods()
+        else:
+            self.write_chat(f"No se ha encontrado el agente {agent_name}")
+
+    @command("exagent")
+    def execute_agent(self, agent_name: str, *args):
+        """
+        Ejecuta un agente con los argumentos especificados.
+
+        :param agent_name: Nombre del agente a ejecutar.
+        :param args: Argumentos que se pasan al método execute() del agente.
+        """
+        agent = self.search_agent(agent_name)
+        if not agent:
+            self.write_chat(f"No se ha encontrado el agente {agent_name}")
+            return
+        
+        if not agent.active:
+            self.write_chat(f"El agente {agent_name} no está activo")
+            return
+        
+        agent.execute(*args)
+
+    @command("exmethod")
+    def execute_method(self, agent_name: str, method_name: str, *args):
+        """
+        Ejecuta un método de un agente con los argumentos especificados.
+
+        :param agent_name: Nombre del agente.
+        :param method_name: Nombre del método a ejecutar.
+        :param args: Argumentos que se pasan al método
+        """
+        agent = self.search_agent(agent_name)
+        if not agent:
+            self.write_chat(f"No se ha encontrado el agente {agent_name}")
+            return
+        
+        if not agent.active:
+            self.write_chat(f"El agente {agent_name} no está activo")
+            return
+        
+        if method_name not in agent.executable_methods:
+            self.write_chat(f"El método {method_name} no existe")
+            return
+        
+        method = getattr(agent, method_name)
+        method(*args)
 
     def run(self):
         """
@@ -362,7 +416,7 @@ class MinecraftFramework:
         que lee los mensajes del chat y ejecuta los comandos correspondientes.
         """
 
-        msg = "Framework de agentes iniciado. Usa el prefijo 'af: ' para ejecutar comandos."
+        msg = "Framework de agentes iniciado. Usa el prefijo 'af: ' para ejecutar comandos. Escribe 'af: help' para ver los comandos disponibles."
         self.__print_info(msg)
         self.write_chat(msg)
 
@@ -376,24 +430,7 @@ class MinecraftFramework:
                 command = message.split(" ")[1]
                 args = message.split(" ")[2:]
 
-                # Si el comando es "show_agents", se muestran los agentes.
-                if command == "show_agents":
-                    self.show_agents()
-
-                # Si el comando es "say_hi", se envía un mensaje desde todos los agentes activos.
-                elif command == "say_hi":
-                    self.say_hi()
-
-                # Si el comando es "show_methods", se muestran los métodos de un agente.
-                elif command == "show_methods":
-                    agent_name = args[0]
-                    agent = self.search_agent(agent_name)
-                    if agent:
-                        agent.show_methods()
-                    else:
-                        self.write_chat(f"No se ha encontrado el agente {agent_name}")
-
-                # Si el comando es "execute", se ejecuta un agente.
+                
             else:
                 # No se hace nada si el mensaje no empieza por "af: ". 
                 # Ya que no es un comando del framework.

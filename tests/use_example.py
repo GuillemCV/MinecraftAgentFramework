@@ -25,8 +25,8 @@ framework.add_agent(agent_tnt)
 framework.remove_agent("Agente8")
 framework.remove_agent("Agente2")
 
-framework.say_hi()
-framework.show_agents()
-agent_tnt.show_methods()
+#framework.say_hi()
+#framework.show_agents()
+#agent_tnt.show_methods()
 
 #framework.run()
