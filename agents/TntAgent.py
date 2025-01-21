@@ -1,4 +1,4 @@
-from framework.MinecraftAgentFramework import MinecraftAgent
+from framework.MinecraftAgentFramework import MinecraftAgent, executable
 
 import framework.mcpi.minecraft as minecraft
 import framework.mcpi.block as block

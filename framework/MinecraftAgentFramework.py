@@ -92,16 +92,18 @@ class MinecraftAgent:
         """
         return self.mc.player.getTilePos()
 
-    def place_block(self, block_type, x, y, z):
+    def place_block(self, x, y, z, block_type, data=0):
         """
         Coloca un bloque en una posición específica.
 
-        :param block_type: Tipo de bloque (por ejemplo, block.STONE).
         :param x: Coordenada X.
         :param y: Coordenada Y.
         :param z: Coordenada Z.
+        :param block_type: Tipo de bloque (por ejemplo, block.STONE).
+        :param data: Datos adicionales del bloque (por ejemplo, 1 para un bloque de TNT
+        que explotará al ser golpeado).
         """
-        self.mc.setBlock(x, y, z, block_type.id)
+        self.mc.setBlock(x, y, z, block_type.id, data)
 
     def destroy_block(self, x, y, z):
         """
