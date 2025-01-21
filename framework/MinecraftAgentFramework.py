@@ -226,7 +226,7 @@ class MinecraftFramework:
                 if callable(method) and hasattr(method, "command"):
                     # Se añade al diccionario de comandos junto con sus parámetros
                     self.commands[method.command] = (method, inspect.signature(method).parameters)
-                
+
     def __print_info(self, message):
         """
         Escribir un mensaje informativo en la consola con la fecha y hora actuales
@@ -254,7 +254,7 @@ class MinecraftFramework:
         list = self.mc.events.pollChatPosts()
         # Si hay mensajes, se devuelve el último. Si no, una cadena vacía.
         return list[-1].message if len(list) > 0 else ""
-    
+
     def search_agent(self, agent_name: str) -> MinecraftAgent:
         """
         Busca un agente por su nombre.
@@ -271,7 +271,7 @@ class MinecraftFramework:
 
         :param agent: Instancia de MinecraftAgent o una clase hija.
         """
-        # Si ya existe un agente con el mismo nombre, se muestra un mensaje de error. 
+        # Si ya existe un agente con el mismo nombre, se muestra un mensaje de error.
         if self.search_agent(agent.name):
             self.__print_info(
                 f"No se puede añadir el agente {agent.name} porque ya existe otro con el mismo nombre"
@@ -346,9 +346,7 @@ class MinecraftFramework:
         if agent:
             agent.active = not agent.active
             status = "Activo" if agent.active else "Inactivo"
-            msg = f"El agente {agent_name} ahora está {status}"
-            self.write_chat(msg) # Se muestra un mensaje en el chat.
-            self.__print_info(msg) # Se muestra un mensaje en la consola.
+            self.write_chat(f"El agente {agent_name} ahora está {status}")
         else:
             self.write_chat(f"No se ha encontrado el agente {agent_name}")
 
@@ -378,11 +376,11 @@ class MinecraftFramework:
         if not agent:
             self.write_chat(f"No se ha encontrado el agente {agent_name}")
             return
-        
+
         if not agent.active:
             self.write_chat(f"El agente {agent_name} no está activo")
             return
-        
+
         agent.execute(*args)
 
     @command("exmethod")
@@ -398,15 +396,15 @@ class MinecraftFramework:
         if not agent:
             self.write_chat(f"No se ha encontrado el agente {agent_name}")
             return
-        
+
         if not agent.active:
             self.write_chat(f"El agente {agent_name} no está activo")
             return
-        
+
         if method_name not in agent.executable_methods:
             self.write_chat(f"El método {method_name} no existe")
             return
-        
+
         method = getattr(agent, method_name)
         method(*args)
 
@@ -426,16 +424,34 @@ class MinecraftFramework:
 
             # Si empieza por "af: ", se considera un comando del framework.
             if message.startswith("af: "):
-                # Se obtiene el comando y los argumentos.
-                command = message.split(" ")[1]
-                args = message.split(" ")[2:]
+                # Se separa el comando y los argumentos.
+                msg_parts = message.split(" ")
+                cmd = msg_parts[1]
+                args = msg_parts[2:] if len(msg_parts) > 2 else []
 
-                
-            else:
-                # No se hace nada si el mensaje no empieza por "af: ". 
-                # Ya que no es un comando del framework.
-                pass
+                # Si el comando existe en el diccionario de comandos, se ejecuta.
+                if cmd in self.commands:
+                    self.__print_info(f"Ejecutando comando {cmd}...")
+
+                    method, params = self.commands[cmd]
+                    # Se comprueba que el número de argumentos sea mayor o igual al número de parámetros.
+                    # Ya que algunos metodos tienen el parametro *args.
+                    if len(args) >= len(params):
+                        # Si no necesita argumentos, se ejecuta directamente.
+                        if len(params) == 0:
+                            method()
+                        else:
+                            # Si necesita argumentos, se ejecuta con los argumentos. Según si el método tiene *args o no.
+                            if params.get("args"):
+                                method(*args) # Se pasa la lista de argumentos como un solo argumento.
+                            else:
+                                method(*args[:len(params) - 1]) # Se pasan los argumentos necesarios.
+                    else:
+                        error = f"ERROR: El comando {cmd} necesita como mínimo {len(params)} argumentos"
+                        self.__print_info(error)
+                        self.write_chat(error)
+                else:
+                    self.write_chat(f"El comando {cmd} no existe")
 
             # Esperar un segundo para no saturar el servidor.
             time.sleep(1)
-
