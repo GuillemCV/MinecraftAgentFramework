@@ -5,16 +5,16 @@ from .mcpi import block
 from .mcpi.minecraft import Minecraft
 
 
-def non_executable(method):
+def executable(method):
     """
-    Decorador para marcar un método como no ejecutable mediante comandos desde el chat de Minecraft.
+    Decorador para marcar un método como ejecutable mediante comandos des del chat de Minecraft.
 
     :param method: Método a decorar.
     :return: Método decorado.
     """
 
-    # Se añade un atributo al método para marcarlo como no ejecutable.
-    method.non_executable = True
+    # Se añade un atributo al método para marcarlo como ejecutable.
+    method.executable = True
 
     # Se devuelve el método original.
     return method
@@ -47,14 +47,13 @@ class MinecraftAgent:
             # Si el nombre no empieza por __
             if not method_name.startswith("__"):
                 method = getattr(self, method_name)
-                # Si es un método y no es no ejecutable
-                if callable(method) and not hasattr(method, "non_executable"):
+                # Si es un método y es ejecutable
+                if callable(method) and hasattr(method, "executable"):
                     # Se añade a la lista de métodos ejecutables
                     self.executable_methods.append(method_name)
 
     # Métodos para interactuar con el servidor de Minecraft:
 
-    @non_executable
     def send_message(self, message: str):
         """
         Envía un mensaje al chat de Minecraft.
@@ -63,7 +62,6 @@ class MinecraftAgent:
         """
         self.mc.postToChat(f"[{self.name}]: {message}")
 
-    @non_executable
     def receive_message(self) -> str:
         """
         Lee el último mensaje del chat de Minecraft. 
@@ -76,7 +74,6 @@ class MinecraftAgent:
         # Si hay mensajes, se devuelve el último. Si no, una cadena vacía.
         return list[-1].message if len(list) > 0 else ""
 
-    @non_executable
     def tp_player(self, x, y, z):
         """
         Teletransporta al jugador a una posición específica.
@@ -87,7 +84,6 @@ class MinecraftAgent:
         """
         self.mc.player.setTilePos(x, y, z)
 
-    @non_executable
     def get_player_pos(self) -> tuple:
         """
         Obtiene la posición actual del jugador.
@@ -96,7 +92,6 @@ class MinecraftAgent:
         """
         return self.mc.player.getTilePos()
 
-    @non_executable
     def place_block(self, block_type, x, y, z):
         """
         Coloca un bloque en una posición específica.
@@ -108,7 +103,6 @@ class MinecraftAgent:
         """
         self.mc.setBlock(x, y, z, block_type.id)
 
-    @non_executable
     def destroy_block(self, x, y, z):
         """
         Destruye un bloque en una posición específica.
@@ -122,6 +116,7 @@ class MinecraftAgent:
     # Métodos para obtener y mostrar los métodos de la clase que se pueden ejecutar
     # mediante comandos desde el chat de Minecraft:
 
+    @executable
     def show_methods(self):
         """
         Muestra en el chat los métodos que se pueden ejecutar mediante comandos
@@ -142,7 +137,6 @@ class MinecraftAgent:
         self.send_message("Metodos disponibles:")
         [self.send_message(f"- {method}({params})") for method, params in zip(methods, methods_params)]
 
-    @non_executable
     def get_methods_names(self) -> list:
         """
         Devuelve el atributo executable_methods.
@@ -154,6 +148,7 @@ class MinecraftAgent:
 
     # Métodos para ejecutar un agente:
 
+    @executable
     def execute(self, *args):
         """
         Template method para ejecutar un agente.
@@ -169,21 +164,18 @@ class MinecraftAgent:
         # Se ejecuta el método end_execute
         self.end_execute()
 
-    @non_executable
     def ini_execute(self):
         """
         Método que se ejecuta al inicio de la ejecución del agente.
         """
         self.send_message("Ejecutando...")
 
-    @non_executable
     def main_execute(self, *args):
         """
         Método principal de la ejecución del agente.
         """
         pass
-    
-    @non_executable
+
     def end_execute(self):
         """
         Método que se ejecuta al final de la ejecución del agente.

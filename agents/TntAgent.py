@@ -1,4 +1,4 @@
-from framework.MinecraftAgentFramework import MinecraftAgent, non_executable
+from framework.MinecraftAgentFramework import MinecraftAgent
 
 import framework.mcpi.minecraft as minecraft
 import framework.mcpi.block as block
@@ -13,7 +13,7 @@ class TntAgent(MinecraftAgent):
 
     # sobreescribir el método main_execute
 
-    @non_executable
+
     def main_execute(self, *args):
         self.send_message("Ejecutando...")
         self.send_message("Fin de la ejecución")

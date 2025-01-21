@@ -7,7 +7,7 @@ from agents.TntAgent import TntAgent
 #mc = minecraft.Minecraft.create()
 
 # Crear una instancia del framework
-mc = minecraft.Minecraft.create()
+mc = None
 framework = MinecraftFramework(mc)
 
 # Crear algunos agentes
@@ -28,9 +28,11 @@ framework.add_agent(agent_tnt)
 framework.remove_agent("Agente8")
 framework.remove_agent("Agente2")
 
+methods = agent_tnt.get_methods_names()
+print(methods)
 # Enviar un mensaje desde todos los agentes activos
-framework.say_hi()
+#framework.say_hi()
 
-framework.show_agents()
+#framework.show_agents()
 
-framework.run()
+#framework.run()
