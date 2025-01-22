@@ -414,38 +414,45 @@ class MinecraftFramework:
         que lee los mensajes del chat y ejecuta los comandos correspondientes.
         """
 
-        msg = "Framework de agentes iniciado. Usa el prefijo 'af: ' para ejecutar comandos. Escribe 'af: help' para ver los comandos disponibles."
-        self.__print_info(msg)
-        self.write_chat(msg)
+        info_msg = "Framework de agentes iniciado. Usa el prefijo 'af: ' para ejecutar comandos. Escribe 'af: help' para ver los comandos disponibles."
+        self.__print_info(info_msg)
+        self.write_chat(info_msg)
 
         while True:
             # Se lee el último mensaje del chat.
-            message = self.read_chat()
+            msg = self.read_chat()
 
             # Si empieza por "af: ", se considera un comando del framework.
-            if message.startswith("af: "):
+            if msg.startswith("af: "):
                 # Se separa el comando y los argumentos.
-                msg_parts = message.split(" ")
+                msg_parts = msg.split(" ")
                 cmd = msg_parts[1]
                 args = msg_parts[2:] if len(msg_parts) > 2 else []
 
                 # Si el comando existe en el diccionario de comandos, se ejecuta.
                 if cmd in self.commands:
-                    self.__print_info(f"Ejecutando comando {cmd}...")
+                    info_msg = f"Procesando comando {cmd}..."
+                    self.__print_info(info_msg)
+                    self.write_chat(info_msg)
 
                     method, params = self.commands[cmd]
                     # Se comprueba que el número de argumentos sea mayor o igual al número de parámetros.
                     # Ya que algunos metodos tienen el parametro *args.
                     if len(args) >= len(params):
-                        # Si no necesita argumentos, se ejecuta directamente.
-                        if len(params) == 0:
-                            method()
-                        else:
-                            # Si necesita argumentos, se ejecuta con los argumentos. Según si el método tiene *args o no.
-                            if params.get("args"):
-                                method(*args) # Se pasa la lista de argumentos como un solo argumento.
+                        try:
+                            # Si no necesita argumentos, se ejecuta directamente.
+                            if len(params) == 0:
+                                method()
                             else:
-                                method(*args[:len(params) - 1]) # Se pasan los argumentos necesarios.
+                                # Si necesita argumentos, se ejecuta con los argumentos. Según si el método tiene *args o no.
+                                if params.get("args"):
+                                    method(*args) # Se pasa la lista de argumentos como un solo argumento.
+                                else:
+                                    method(*args[:len(params) - 1]) # Se pasan los argumentos necesarios.
+                        except Exception as e:
+                            error = f"ERROR: Ha ocurrido un error al ejecutar el comando {cmd}"
+                            self.__print_info(error + f": {str(e)}")
+                            self.write_chat(error)
                     else:
                         error = f"ERROR: El comando {cmd} necesita como mínimo {len(params)} argumentos"
                         self.__print_info(error)
