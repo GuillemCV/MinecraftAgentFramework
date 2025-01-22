@@ -24,18 +24,21 @@ class MinecraftAgent:
     Clase base de la que heredan todos los agentes de Minecraft.
     """
 
-    def __init__(self, name: str, active: bool, mc: Minecraft):
+    def __init__(self, name: str, active: bool, info: str, mc: Minecraft):
         """
-        Inicializa un agente con un nombre y un estado inicial.
+        Inicializa un agente.
 
         :param name: Nombre del agente.
         :param active: Si el agente está activo o no inicialmente (True o False).
+        :param info: Información sobre el agente, como una descripción o instrucciones para la ejecución.
         :param mc: Instancia de Minecraft para interactuar con el servidor.
+        
         """
         self.name = name
         self.active = active
+        self.info = info
         self.mc = mc
-
+        
         self.executable_methods = []
         """
         Lista de nombres de métodos que se pueden ejecutar mediante comandos desde el chat de Minecraft
@@ -363,6 +366,19 @@ class MinecraftFramework:
             agent.show_methods()
         else:
             self.write_chat(f"No se ha encontrado el agente {agent_name}")
+    
+    @command("shinfo")
+    def show_info(self, agent_name: str):
+        """
+        Muestra en el chat la información del agente.
+
+        :param agent_name: Nombre del agente.
+        """
+        agent = self.search_agent(agent_name)
+        if agent:
+            self.write_chat(f"Información del agente {agent_name}: {agent.info}")
+        else:
+            self.write_chat(f"No se ha encontrado el agente {agent_name}")
 
     @command("exagent")
     def execute_agent(self, agent_name: str, *args):
@@ -381,7 +397,10 @@ class MinecraftFramework:
             self.write_chat(f"El agente {agent_name} no está activo")
             return
 
-        agent.execute(*args)
+        try:
+            agent.execute(*args)
+        except Exception as e:
+            self.write_chat(f"ERROR: Error al ejecutar el agente {agent_name}: {str(e)}")
 
     @command("exmethod")
     def execute_method(self, agent_name: str, method_name: str, *args):
@@ -406,8 +425,16 @@ class MinecraftFramework:
             return
 
         method = getattr(agent, method_name)
-        method(*args)
+        params = inspect.signature(method).parameters
+        args = list(args)
 
+        try:
+            args_correct, necessary_args = method_execution(method, params, args)
+            if not args_correct:
+                self.write_chat(f"El método {method_name} necesita como mínimo {necessary_args} argumentos")
+        except Exception as e:
+            self.write_chat(f"ERROR: Error al ejecutar el método {method_name} del agente {agent_name}: {str(e)}")
+       
     def run(self):
         """
         Método principal para ejecutar el framework. Consiste en un bucle infinito
@@ -426,8 +453,8 @@ class MinecraftFramework:
             if msg.startswith("af: "):
                 # Se separa el comando y los argumentos.
                 msg_parts = msg.split(" ")
-                cmd = msg_parts[1]
-                args = msg_parts[2:] if len(msg_parts) > 2 else []
+                cmd = msg_parts[1]  # Comando a ejecutar
+                args = (msg_parts[2:] if len(msg_parts) > 2 else [])  # Argumentos del comando
 
                 # Si el comando existe en el diccionario de comandos, se ejecuta.
                 if cmd in self.commands:
@@ -435,30 +462,55 @@ class MinecraftFramework:
                     self.__print_info(info_msg)
                     self.write_chat(info_msg)
 
+                    # Se obtiene el método asociado al comando y sus parámetros.
                     method, params = self.commands[cmd]
-                    # Se comprueba que el número de argumentos sea mayor o igual al número de parámetros.
-                    # Ya que algunos metodos tienen el parametro *args.
-                    if len(args) >= len(params):
-                        try:
-                            # Si no necesita argumentos, se ejecuta directamente.
-                            if len(params) == 0:
-                                method()
-                            else:
-                                # Si necesita argumentos, se ejecuta con los argumentos. Según si el método tiene *args o no.
-                                if params.get("args"):
-                                    method(*args) # Se pasa la lista de argumentos como un solo argumento.
-                                else:
-                                    method(*args[:len(params) - 1]) # Se pasan los argumentos necesarios.
-                        except Exception as e:
-                            error = f"ERROR: Ha ocurrido un error al ejecutar el comando {cmd}"
-                            self.__print_info(error + f": {str(e)}")
-                            self.write_chat(error)
-                    else:
-                        error = f"ERROR: El comando {cmd} necesita como mínimo {len(params)} argumentos"
+                    args_correct, necessary_args = method_execution(method, params, args)
+                    if not args_correct:
+                        error = f"ERROR: El comando {cmd} necesita como mínimo {necessary_args} argumentos"
                         self.__print_info(error)
                         self.write_chat(error)
                 else:
-                    self.write_chat(f"El comando {cmd} no existe")
+                    self.write_chat(f"ERROR: El comando {cmd} no existe")
 
             # Esperar un segundo para no saturar el servidor.
             time.sleep(1)
+
+def method_execution(method, params, args) -> tuple[bool, int]:
+    """
+    Ejecuta un método con los argumentos especificados, según los parámetros que acepta.
+
+    :param method: Método a ejecutar.
+    :param params: Parámetros del método.
+    :param args: Argumentos que se pasan al método.
+
+    :return: Tupla con un booleano que indica si se han pasado los argumentos necesarios
+    y el número mínimo de argumentos necesarios.
+    """
+    # Si el método no tiene parámetros se ejecuta directamente, ignorando los argumentos
+    # que haya escrito el jugador.
+    if len(params) == 0:
+        method()
+        return True, 0
+    else:
+        # Si tiene parámetros, hay que comprovar que el número de argumentos sea
+        # correcto, según si el método tiene *args o no.
+        has_param_args = True if "args" in params else False
+
+        # Se calcula el mínimo número de argumentos necesarios. Teniendo en cuenta
+        # que *args se considera opcional.
+        necessary_args = len(params) - 1 if has_param_args else len(params)
+
+        # Si el número de argumentos es mayor o igual al mínimo necesario, se ejecuta el método.
+        if len(args) >= necessary_args:
+            if has_param_args:
+                # Si el método tiene *args, se pasan todos los argumentos.
+                method(*args)
+            else:
+                # Si no, se pasan solo los argumentos necesarios, ignorando los argumentos
+                # adicionales que haya escrito el jugador.
+                method(*args[:necessary_args])
+            
+            return True, necessary_args
+        else:
+            return False, necessary_args
+    

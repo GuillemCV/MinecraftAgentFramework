@@ -3,8 +3,9 @@ import framework.mcpi.minecraft as minecraft
 import framework.mcpi.block as block
 from agents.TntAgent import TntAgent
 
+"""
 # Crear una instancia del framework
-mc = minecraft.Minecraft.create()
+mc = None
 framework = MinecraftFramework(mc)
 
 # Crear algunos agentes
@@ -24,6 +25,18 @@ framework.add_agent(agent_tnt)
 # Eliminar un agente
 framework.remove_agent("Agente8")
 framework.remove_agent("Agente2")
+"""
+# ejemplos de uso de *args
+def test_args(x, *args):
+    print("x:", x)
+    sum = sumar(*args)
+    print("sum:", sum)
+
+def sumar(*args):
+    return sum(args)
+
+tuple = (2, 3, 4, 5)
+test_args(1, *tuple)
 
 #framework.say_hi()
 #framework.show_agents()
