@@ -176,7 +176,7 @@ class MinecraftAgent:
         """
         Método que se ejecuta al final de la ejecución del agente.
         """
-        self.send_message("Fin de la ejecución")
+        self.send_message("Fin de la ejecucion")
 
 def command(cmd : str):
     """

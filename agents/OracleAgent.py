@@ -1,56 +1,73 @@
 import random
+import time
 from framework.MinecraftAgentFramework import MinecraftAgent, executable
 import framework.mcpi.block as block
 
 
 class OracleAgent(MinecraftAgent):
     def __init__(self, name, active, mc):
-        info = ("Agente que coloca aleatoriamente bloques de TNT dentro de un radio alrededor del jugador, tantos como se le indique. " 
-                "Argumentos: radio (int) y numero de bloques de TNT a colocar (int)")
+        info = ("Agente que muestra preguntas de cultura general y da la respuesta a la pregunta que escoja el jugador. "
+                "Argumentos: ninguno")
         super().__init__(name, active, info, mc)
 
     # Sobreescribir el método main_execute:
     def main_execute(self, *args):
-        # Se comprueba que se hayan pasado como mínimo dos argumentos, el resto se ignoran.
-        if len(args) < 2:
-            raise ValueError("Se necesitan dos argumentos: radio y numero de bloques de TNT a colocar")
+        # Mostramos las preguntas y esperamos a que el jugador escoja una
+        self.send_message("Escoge una pregunta del 1 al 25 para saber la respuesta:")
+        for question, answer in self.questions_and_answers:
+            self.send_message(question)
 
-        # Se obtienen los argumentos
-        try:
-            radius = int(args[0])
-            num_tnt = int(args[1])
-        except ValueError:
-            raise ValueError("Los argumentos deben ser numeros enteros")
+        # Bucle infinito hasta que el jugador escoja una pregunta válida
+        while True:
+            # Se obtiene la respuesta del jugador
+            question_number = self.receive_message()
 
-        for _ in range(num_tnt):
-            self.place_tnt(radius)
+            # Si se ha escrito algo
+            if not question_number == "":
+                # Se comprueba que la respuesta sea un número entre 1 y 25
+                try:
+                    question_number = int(question_number)
+                    if 1 <= question_number <= 25:
+                        # Se obtiene la respuesta correcta
+                        question, answer = self.questions_and_answers[question_number - 1]
+                        self.send_message(f"La respuesta a la pregunta {question} es: {answer}")
+                        break
+                    else:
+                        # Si el número no está entre 1 y 25
+                        self.send_message("Por favor, escoge un numero entre 1 y 25")
+                except ValueError:
+                    # Si no se ha introducido un número
+                    self.send_message("Por favor, introduce un numero")
+                
+            # Esperamos medio segundo
+            time.sleep(0.5)
 
-    # Definir otros métodos si es necesario, para ser llamados desde main_execute i/o
-    # ser ejecutados mediante comandos des del chat del juego (decorator @executable):
-
-    @executable
-    def place_tnt(self, radius):
-        """
-        Coloca un bloque de TNT en una posición aleatoria alrededor del jugador, este
-        explota cuando el jugador intenta destruirlo.
-
-        :param radius: Distancia máxima a la que se colocará el TNT alrededor del jugador
-
-        """
-
-        # Se comprueba que el radio sea un número entero
-        try:
-            radius = int(radius)
-        except ValueError:
-            raise ValueError("El radio debe ser un numero entero")
-
-        # Se obtiene la posición del jugador
-        pos = self.mc.player.getTilePos()
-
-        # Se calcula una posición aleatoria alrededor del jugador
-        x = pos.x + random.randint(-radius, radius)
-        y = pos.y + random.randint(-radius, radius)
-        z = pos.z + random.randint(-radius, radius)
-
-        # Se coloca un bloque de TNT en la posición calculada
-        self.place_block(x, y, z, block.TNT, 1)
+    
+    # Lista de preguntas y respuestas
+    questions_and_answers = [
+    ("1. Cual es el planeta mas grande del sistema solar?", "Jupiter"),
+    ("2. En que continente se encuentra Egipto?", "Africa"),
+    ("3. Quien Pinto la Mona Lisa?", "Leonardo da Vinci"),
+    ("4. Cual es el oceano mas grande del mundo?", "Pacifico"),
+    ("5. Que pais tiene forma de bota?", "Italia"),
+    ("6. Quien escribio Don Quijote de la Mancha?", "Miguel de Cervantes"),
+    ("7. Cual es el metal mas ligero?", "Litio"),
+    ("8. Cual es el animal mas rapido del mundo?", "Guepardo"),
+    ("9. Que instrumento mide los terremotos?", "Sismografo"),
+    ("10. En que ano llego el hombre a la Luna?", "1969"),
+    ("11. Que gas respiramos para vivir?", "Oxigeno"),
+    ("12. Cual es el rio mas largo del mundo?", "Nilo"),
+    ("13. Que idioma se habla en Brasil?", "Portugues"),
+    ("14. Quien es el padre de la teoria de la relatividad?", "Albert Einstein"),
+    ("15. Que numero romano representa el 100?", "C"),
+    ("16. Cual es la capital de Japon?", "Tokio"),
+    ("17. Que tipo de animal es una ballena?", "Mamifero"),
+    ("18. Cual es el pais mas grande del mundo?", "Rusia"),
+    ("19. En que ano comenzo la Segunda Guerra Mundial?", "1939"),
+    ("20. Que elemento quimico tiene el simbolo H?", "Hidrogeno"),
+    ("21. Cuantos lados tiene un hexagono?", "Seis"),
+    ("22. Quien es conocido como el rey del rock and roll?", "Elvis Presley"),
+    ("23. Que pais es famoso por su torre inclinada?", "Italia"),
+    ("24. Que planeta se conoce como el planeta rojo?", "Marte"),
+    ("25. Quien fue el primer presidente de los Estados Unidos?", "George Washington")
+    ]
