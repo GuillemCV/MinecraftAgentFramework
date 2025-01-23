@@ -483,7 +483,7 @@ def method_execution(method, params, args) -> tuple[bool, int]:
     :param params: Parámetros del método.
     :param args: Argumentos que se pasan al método.
 
-    :return: Tupla con un booleano que indica si se han pasado los argumentos necesarios
+    :return: Tupla con un booleano que indica si el número de argumentos es correcto (True) o no (False)
     y el número mínimo de argumentos necesarios.
     """
     # Si el método no tiene parámetros se ejecuta directamente, ignorando los argumentos
