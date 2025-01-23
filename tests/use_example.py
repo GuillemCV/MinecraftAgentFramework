@@ -3,8 +3,10 @@ import framework.mcpi.minecraft as minecraft
 import framework.mcpi.block as block
 from agents.TntAgent import TntAgent
 
-# Crear una instancia del framework
+# Crear una instancia de Minecraft
 mc = minecraft.Minecraft.create()
+
+# Crear una instancia del framework
 framework = MinecraftFramework(mc)
 
 # Crear algunos agentes
@@ -25,4 +27,5 @@ framework.add_agent(agent_tnt)
 framework.remove_agent("Agente8") # No se eliminará, no existe un agente con ese nombre
 framework.remove_agent("Agente2") # Se eliminará el agente con nombre "Agente2"
  
+# Ejecutar el framework
 framework.run()
