@@ -338,7 +338,7 @@ class MinecraftFramework:
         if agent:
             agent.active = not agent.active
             status = "Activo" if agent.active else "Inactivo"
-            self.write_chat(f"El agente {agent_name} ahora está {status}")
+            self.write_chat(f"El agente {agent_name} ahora esta {status}")
         else:
             self.write_chat(f"No se ha encontrado el agente {agent_name}")
 
@@ -365,7 +365,7 @@ class MinecraftFramework:
         """
         agent = self.search_agent(agent_name)
         if agent:
-            self.write_chat(f"Información del agente {agent_name}: {agent.info}")
+            self.write_chat(f"Informacion del agente {agent_name}: {agent.info}")
         else:
             self.write_chat(f"No se ha encontrado el agente {agent_name}")
 
@@ -383,7 +383,7 @@ class MinecraftFramework:
             return
 
         if not agent.active:
-            self.write_chat(f"El agente {agent_name} no está activo")
+            self.write_chat(f"El agente {agent_name} no esta activo")
             return
 
         try:
@@ -406,11 +406,11 @@ class MinecraftFramework:
             return
 
         if not agent.active:
-            self.write_chat(f"El agente {agent_name} no está activo")
+            self.write_chat(f"El agente {agent_name} no esta activo")
             return
 
         if method_name not in agent.executable_methods:
-            self.write_chat(f"El método {method_name} no existe")
+            self.write_chat(f"El metodo {method_name} no existe")
             return
 
         method = getattr(agent, method_name)
@@ -420,9 +420,9 @@ class MinecraftFramework:
         try:
             args_correct, necessary_args = method_execution(method, params, args)
             if not args_correct:
-                self.write_chat(f"El método {method_name} necesita como mínimo {necessary_args} argumentos")
+                self.write_chat(f"El metodo {method_name} necesita como minimo {necessary_args} argumentos")
         except Exception as e:
-            self.write_chat(f"ERROR: Error al ejecutar el método {method_name} del agente {agent_name}: {str(e)}")
+            self.write_chat(f"ERROR: Error al ejecutar el metodo {method_name} del agente {agent_name}: {str(e)}")
        
     def run(self):
         """
@@ -455,14 +455,14 @@ class MinecraftFramework:
                     method, params = self.commands[cmd]
                     args_correct, necessary_args = method_execution(method, params, args)
                     if not args_correct:
-                        error = f"ERROR: El comando {cmd} necesita como mínimo {necessary_args} argumentos"
+                        error = f"ERROR: El comando {cmd} necesita como minimo {necessary_args} argumentos"
                         self.__print_info(error)
                         self.write_chat(error)
                 else:
                     self.write_chat(f"ERROR: El comando {cmd} no existe")
 
-            # Esperar un segundo para no saturar el servidor.
-            time.sleep(1)
+            # Esperar medio segundo para no saturar el servidor.
+            time.sleep(0.5)
 
 def method_execution(method, params, args) -> tuple[bool, int]:
     """
