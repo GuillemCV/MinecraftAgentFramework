@@ -29,13 +29,13 @@ class MathAgent(MinecraftAgent):
                         self.send_message("Por favor, escoge un numero entre 1 y 4")
                 except ValueError:
                     self.send_message("Por favor, escribe un numero entero")
-                
+
             # Esperamos medio segundo
             time.sleep(0.5)
 
         # Le pedimos al jugador que introduzca dos números enteros
         self.send_message("Introduce dos numeros enteros separados por un espacio:")
-        
+
         # Bucle hasta que el jugador introduzca dos números enteros
         while True:
             # Se obtiene el primer número
@@ -49,20 +49,19 @@ class MathAgent(MinecraftAgent):
                     break
                 except ValueError:
                     self.send_message("Por favor, escribe dos numeros enteros separados por un espacio")
-            
+
             # Esperamos medio segundo
             time.sleep(0.5)
 
         # Realizamos la operación escogida
         if op_num == 1:
-            self.suma(a, b)
+            self.sum(a, b)
         elif op_num == 2:
-            self.resta(a, b)
+            self.subs(a, b)
         elif op_num == 3:
-            self.multiplicacion(a, b)
+            self.mult(a, b)
         elif op_num == 4:
-            self.division(a, b)
-
+            self.div(a, b)
 
     # Definir otros métodos si es necesario, para ser llamados desde main_execute i/o
     # ser ejecutados mediante comandos des del chat del juego (decorator @executable):
@@ -78,7 +77,7 @@ class MathAgent(MinecraftAgent):
             self.send_message(op)
 
     @executable
-    def suma(self, a, b):
+    def sum(self, a, b):
         """
         Suma dos números y devuelve el resultado.
 
@@ -93,9 +92,9 @@ class MathAgent(MinecraftAgent):
             raise ValueError("Los argumentos deben ser numeros enteros")
 
         return self.send_message(f"{a} + {b} = {a + b}")
-    
+
     @executable
-    def resta(self, a, b):
+    def subs(self, a, b):
         """
         Resta dos números y devuelve el resultado.
 
@@ -110,9 +109,9 @@ class MathAgent(MinecraftAgent):
             raise ValueError("Los argumentos deben ser numeros enteros")
 
         return self.send_message(f"{a} - {b} = {a - b}")
-    
+
     @executable
-    def multiplicacion(self, a, b):
+    def mult(self, a, b):
         """
         Multiplica dos números y devuelve el resultado.
 
@@ -127,9 +126,9 @@ class MathAgent(MinecraftAgent):
             raise ValueError("Los argumentos deben ser numeros enteros")
 
         return self.send_message(f"{a} * {b} = {a * b}")
-    
+
     @executable
-    def division(self, a, b):
+    def div(self, a, b):
         """
         Divide dos números y devuelve el resultado.
 
