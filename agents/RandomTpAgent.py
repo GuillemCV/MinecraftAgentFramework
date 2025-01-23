@@ -21,9 +21,14 @@ class RandomTpAgent(MinecraftAgent):
         except ValueError:
             raise ValueError("El argumento debe ser un numero entero")
 
+        # Se obtiene la posición del jugador
         player_pos = self.get_player_pos()
+
+        # Se calcula una posición aleatoria alrededor del jugador
         x = player_pos.x + random.randint(-radius, radius)
         y = player_pos.y + random.randint(-radius, radius)
         z = player_pos.z + random.randint(-radius, radius)
+
+        # Se transporta al jugador a la posición calculada
         self.tp_player(x, y, z)
 
