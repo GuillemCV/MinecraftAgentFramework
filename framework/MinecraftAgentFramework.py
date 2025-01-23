@@ -118,7 +118,7 @@ class MinecraftAgent:
         """
         self.mc.setBlock(x, y, z, block.AIR.id)
 
-    # Métodos para obtener y mostrar los métodos de la clase que se pueden ejecutar
+    # Método para mostrar los métodos de la clase que se pueden ejecutar
     # mediante comandos desde el chat de Minecraft:
 
     @executable
@@ -267,9 +267,7 @@ class MinecraftFramework:
         """
         # Si ya existe un agente con el mismo nombre, se muestra un mensaje de error.
         if self.search_agent(agent.name):
-            self.__print_info(
-                f"No se puede añadir el agente {agent.name} porque ya existe otro con el mismo nombre"
-            )
+            self.__print_info(f"No se puede añadir el agente {agent.name} porque ya existe otro con el mismo nombre")
         else:
             # Si no existe, se añade a la lista de agentes.
             self.agents.append(agent)
