@@ -22,6 +22,7 @@ agent4 = MinecraftAgent(name="Agente4", active=True, info="", mc=mc)
 tnt_agent = TntAgent(name="TntAgent", active=True, mc=mc)
 insult_agent = InsultAgent(name="InsultAgent", active=True, mc=mc)
 oracle_agent = OracleAgent(name="OracleAgent", active=True, mc=mc)
+random_tp_agent = RandomTpAgent(name="RandomTpAgent", active=True, mc=mc)
 
 
 # Añadir los agentes al framework
@@ -32,6 +33,7 @@ framework.add_agent(agent4)
 framework.add_agent(tnt_agent)
 framework.add_agent(insult_agent)
 framework.add_agent(oracle_agent)
+framework.add_agent(random_tp_agent)
 
 # Eliminar un agente
 framework.remove_agent("Agente8") # No se eliminará, no existe un agente con ese nombre
