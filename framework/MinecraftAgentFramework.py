@@ -129,7 +129,7 @@ class MinecraftAgent:
         """
 
         # Se obtienen los métodos de la clase
-        methods = self.get_methods_names()
+        methods = self.executable_methods
 
         # Se obtienen los parámetros de cada método usando inspect
         methods_params = []
@@ -141,15 +141,6 @@ class MinecraftAgent:
         # Se muestra en el chat el nombre de los métodos y sus parámetros
         self.send_message("Metodos disponibles:")
         [self.send_message(f"- {method}({params})") for method, params in zip(methods, methods_params)]
-
-    def get_methods_names(self) -> list:
-        """
-        Devuelve el atributo executable_methods.
-
-        :return: Lista con los nombres de los métodos que se pueden ejecutar
-        mediante comandos desde el chat de Minecraft.
-        """
-        return self.executable_methods
 
     # Métodos para ejecutar un agente:
 
