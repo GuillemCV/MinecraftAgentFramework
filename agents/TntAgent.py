@@ -13,7 +13,7 @@ class TntAgent(MinecraftAgent):
     def main_execute(self, *args):
         # Se comprueba que se hayan pasado como mínimo dos argumentos, el resto se ignoran.
         if len(args) < 2:
-            raise ValueError("Se necesitan dos argumentos: radio y numero de bloques de TNT a colocar")
+            raise ValueError("Se necesitan dos argumentos: radio (int) y numero de bloques de TNT a colocar (int)")
 
         # Se obtienen los argumentos
         try:
@@ -45,7 +45,7 @@ class TntAgent(MinecraftAgent):
             raise ValueError("El radio debe ser un numero entero")
 
         # Se obtiene la posición del jugador
-        pos = self.mc.player.getTilePos()
+        pos = self.get_player_pos()
 
         # Se calcula una posición aleatoria alrededor del jugador
         x = pos.x + random.randint(-radius, radius)

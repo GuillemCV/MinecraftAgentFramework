@@ -3,7 +3,7 @@ from framework.MinecraftAgentFramework import MinecraftAgent, executable
 import framework.mcpi.block as block
 
 
-class InsultAgent(MinecraftAgent):
+class RandomTpAgent(MinecraftAgent):
     def __init__(self, name, active, mc):
         info = ("Agente que coloca aleatoriamente bloques de TNT dentro de un radio alrededor del jugador, tantos como se le indique. " 
                 "Argumentos: radio (int) y numero de bloques de TNT a colocar (int)")
