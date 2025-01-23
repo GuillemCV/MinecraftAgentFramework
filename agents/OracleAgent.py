@@ -13,34 +13,57 @@ class OracleAgent(MinecraftAgent):
     # Sobreescribir el método main_execute:
     def main_execute(self, *args):
         # Mostramos las preguntas y esperamos a que el jugador escoja una
+        self.show_questions()
+
+        # Bucle hasta que el jugador escoja una pregunta
+        correct_question_number = False
+        while not correct_question_number:
+            # Se obtiene la respuesta del jugador
+            question_number = self.receive_message()
+
+            # Se comprueba que el número de pregunta sea correcto
+            correct_question_number = self.check_question_number(question_number)
+                
+            # Esperamos medio segundo
+            time.sleep(0.5)
+
+    def show_questions(self):
+        """
+        Muestra las preguntas de cultura general al jugador.
+        """
         self.send_message("Escoge una pregunta del 1 al 25 para saber la respuesta:")
         for question, answer in self.questions_and_answers:
             self.send_message(question)
 
-        # Bucle infinito hasta que el jugador escoja una pregunta válida
-        while True:
-            # Se obtiene la respuesta del jugador
-            question_number = self.receive_message()
+    def check_question_number(self, question_number) -> bool:
+        """
+        Comprueba que el número de pregunta introducido sea un número entero entre 1 y 25.
 
-            # Si se ha escrito algo
-            if not question_number == "":
-                # Se comprueba que la respuesta sea un número entre 1 y 25
-                try:
-                    question_number = int(question_number)
-                    if 1 <= question_number <= 25:
-                        # Se obtiene la respuesta correcta
-                        question, answer = self.questions_and_answers[question_number - 1]
-                        self.send_message(f"La respuesta a la pregunta {question} es: {answer}")
-                        break
-                    else:
-                        # Si el número no está entre 1 y 25
-                        self.send_message("Por favor, escoge un numero entre 1 y 25")
-                except ValueError:
-                    # Si no se ha introducido un número
-                    self.send_message("Por favor, introduce un numero")
-                
-            # Esperamos medio segundo
-            time.sleep(0.5)
+        :param question_number: Número de pregunta introducido por el jugador.
+        :return: True si el número es correcto, False en caso contrario.
+        """
+
+        correct = False
+        # Si se ha escrito algo
+        if not question_number == "":
+            # Se comprueba que la respuesta sea un número entre 1 y 25
+            try:
+                question_number = int(question_number)
+                if 1 <= question_number <= 25:
+                    # Se obtiene la respuesta correcta
+                    question, answer = self.questions_and_answers[question_number - 1]
+                    self.send_message(f"La respuesta a la pregunta {question} es: {answer}")
+                    correct = True
+                else:
+                    # Si el número no está entre 1 y 25
+                    self.send_message("Por favor, escoge un numero entre 1 y 25")
+                    correct = False
+            except ValueError:
+                # Si no se ha introducido un número
+                self.send_message("Por favor, introduce un numero")
+                correct = False
+
+        return correct
 
     
     # Lista de preguntas y respuestas

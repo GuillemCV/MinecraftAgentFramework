@@ -5,8 +5,8 @@ import framework.mcpi.block as block
 
 class MathAgent(MinecraftAgent):
     def __init__(self, name, active, mc):
-        info = ("Agente que coloca aleatoriamente bloques de TNT dentro de un radio alrededor del jugador, tantos como se le indique. " 
-                "Argumentos: radio (int) y numero de bloques de TNT a colocar (int)")
+        info = ("Agente que te da el resultado de la operación matemática que escojas. "
+                "Argumentos: Ninguno")
         super().__init__(name, active, info, mc)
 
     # Sobreescribir el método main_execute:
