@@ -1,56 +1,146 @@
 import random
+import time
 from framework.MinecraftAgentFramework import MinecraftAgent, executable
 import framework.mcpi.block as block
 
 
 class MathAgent(MinecraftAgent):
     def __init__(self, name, active, mc):
-        info = ("Agente que te da el resultado de la operación matemática que escojas. "
+        info = ("Agente que te da el resultado de la operacion matematica que escojas. "
                 "Argumentos: Ninguno")
         super().__init__(name, active, info, mc)
 
     # Sobreescribir el método main_execute:
     def main_execute(self, *args):
-        # Se comprueba que se hayan pasado como mínimo dos argumentos, el resto se ignoran.
-        if len(args) < 2:
-            raise ValueError("Se necesitan dos argumentos: radio y numero de bloques de TNT a colocar")
+        # Mostramos las operaciones disponibles
+        self.show_ops()
 
-        # Se obtienen los argumentos
-        try:
-            radius = int(args[0])
-            num_tnt = int(args[1])
-        except ValueError:
-            raise ValueError("Los argumentos deben ser numeros enteros")
+        # Bucle hasta que el jugador escoja una operación
+        while True:
+            # Se obtiene la respuesta del jugador
+            op_num = self.receive_message()
 
-        for _ in range(num_tnt):
-            self.place_tnt(radius)
+            if not op_num == "":
+                try:
+                    op_num = int(op_num)
+                    if 1 <= op_num <= 4:
+                        break
+                    else:
+                        self.send_message("Por favor, escoge un numero entre 1 y 4")
+                except ValueError:
+                    self.send_message("Por favor, escribe un numero entero")
+                
+            # Esperamos medio segundo
+            time.sleep(0.5)
+
+        # Le pedimos al jugador que introduzca dos números enteros
+        self.send_message("Introduce dos numeros enteros separados por un espacio:")
+        
+        # Bucle hasta que el jugador introduzca dos números enteros
+        while True:
+            # Se obtiene el primer número
+            nums = self.receive_message()
+
+            if not nums == "":
+                try:
+                    a, b = nums.split(" ")
+                    a = int(a)
+                    b = int(b)
+                    break
+                except ValueError:
+                    self.send_message("Por favor, escribe dos numeros enteros separados por un espacio")
+            
+            # Esperamos medio segundo
+            time.sleep(0.5)
+
+        # Realizamos la operación escogida
+        if op_num == 1:
+            self.suma(a, b)
+        elif op_num == 2:
+            self.resta(a, b)
+        elif op_num == 3:
+            self.multiplicacion(a, b)
+        elif op_num == 4:
+            self.division(a, b)
+
 
     # Definir otros métodos si es necesario, para ser llamados desde main_execute i/o
     # ser ejecutados mediante comandos des del chat del juego (decorator @executable):
 
+    def show_ops(self):
+        """
+        Muestra las operaciones matemáticas disponibles.
+
+        """
+        ops = ["1. suma", "2. resta", "3. multiplicacion", "4. division"]
+        self.send_message("Escoge la operacion que quieras realizar:")
+        for op in ops:
+            self.send_message(op)
+
     @executable
-    def place_tnt(self, radius):
+    def suma(self, a, b):
         """
-        Coloca un bloque de TNT en una posición aleatoria alrededor del jugador, este
-        explota cuando el jugador intenta destruirlo.
+        Suma dos números y devuelve el resultado.
 
-        :param radius: Distancia máxima a la que se colocará el TNT alrededor del jugador
+        :param a: Primer número
+        :param b: Segundo número
 
         """
-
-        # Se comprueba que el radio sea un número entero
         try:
-            radius = int(radius)
+            a = int(a)
+            b = int(b)
         except ValueError:
-            raise ValueError("El radio debe ser un numero entero")
+            raise ValueError("Los argumentos deben ser numeros enteros")
 
-        # Se obtiene la posición del jugador
-        pos = self.mc.player.getTilePos()
+        return self.send_message(f"{a} + {b} = {a + b}")
+    
+    @executable
+    def resta(self, a, b):
+        """
+        Resta dos números y devuelve el resultado.
 
-        # Se calcula una posición aleatoria alrededor del jugador
-        x = pos.x + random.randint(-radius, radius)
-        y = pos.y + random.randint(-radius, radius)
-        z = pos.z + random.randint(-radius, radius)
+        :param a: Primer número
+        :param b: Segundo número
 
-        # Se coloca un bloque de TNT en la posición calculada
-        self.place_block(x, y, z, block.TNT, 1)
+        """
+        try:
+            a = int(a)
+            b = int(b)
+        except ValueError:
+            raise ValueError("Los argumentos deben ser numeros enteros")
+
+        return self.send_message(f"{a} - {b} = {a - b}")
+    
+    @executable
+    def multiplicacion(self, a, b):
+        """
+        Multiplica dos números y devuelve el resultado.
+
+        :param a: Primer número
+        :param b: Segundo número
+
+        """
+        try:
+            a = int(a)
+            b = int(b)
+        except ValueError:
+            raise ValueError("Los argumentos deben ser numeros enteros")
+
+        return self.send_message(f"{a} * {b} = {a * b}")
+    
+    @executable
+    def division(self, a, b):
+        """
+        Divide dos números y devuelve el resultado.
+
+        :param a: Primer número
+        :param b: Segundo número
+
+        """
+        try:
+            a = int(a)
+            b = int(b)
+        except ValueError:
+            raise ValueError("Los argumentos deben ser numeros enteros")
+
+        return self.send_message(f"{a} / {b} = {a / b}")
