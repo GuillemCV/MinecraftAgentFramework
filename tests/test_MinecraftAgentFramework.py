@@ -78,6 +78,7 @@ class TestMinecraftAgentFramework(unittest.TestCase):
             print(pos)
             self.assertTrue(True)
         except Exception as e:
+            # En GitHub Actions no se puede obtener la posición del jugador
             self.assertTrue(True)
 
     def test_place_block(self):
