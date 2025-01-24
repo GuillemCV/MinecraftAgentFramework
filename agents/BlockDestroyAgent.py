@@ -3,7 +3,7 @@ from framework.MinecraftAgentFramework import MinecraftAgent, executable
 import framework.mcpi.block as block
 
 
-class BlockDestroyer(MinecraftAgent):
+class BlockDestroyAgent(MinecraftAgent):
     def __init__(self, name, active, mc):
         info = ("Agente que destruye bloques en un radio alrededor del jugador, tantos como se le indique. " 
                 "Argumentos: radio (int) y numero de bloques a destruir (int)")

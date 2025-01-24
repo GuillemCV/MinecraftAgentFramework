@@ -35,11 +35,11 @@ jobs:
           cd minecraft_server/Server
           chmod +x start.sh
           ./start.sh &  # Inicia el servidor en segundo plano
-          sleep 15  # Espera a que el servidor arranque correctamente
+          sleep 60  # Espera a que el servidor arranque correctamente
 
       # 5. Ejecutar los tests con cobertura
       - name: Run tests with coverage
-        run: pytest --cov=MinecraftAgentFramework tests/
+        run: pytest --cov=MinecraftAgentFramework/agents/ --cov=MinecraftAgentFramework/framework/MinecraftAgentFramework.py tests/
 
       # 6. Subir los resultados de cobertura a Codecov
       - name: Upload coverage to Codecov
