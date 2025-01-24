@@ -39,10 +39,11 @@ jobs:
 
       # 5. Ejecutar los tests con cobertura
       - name: Run tests with coverage
-        run: pytest --cov=agents/ --cov=framework/ tests/
+        run: pytest --cov=agents/ --cov=framework/ tests/ --cov-report xml:coverage.xml
 
       # 6. Subir los resultados de cobertura a Codecov
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
+          file: ./coverage.xml
