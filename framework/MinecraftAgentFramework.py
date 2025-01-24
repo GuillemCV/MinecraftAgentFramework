@@ -418,7 +418,7 @@ class MinecraftFramework:
         args = list(args)
 
         try:
-            args_correct, necessary_args = method_execution(method, params, args)
+            args_correct, necessary_args, ret = method_execution(method, params, args)
             if not args_correct:
                 self.write_chat(f"El metodo {method_name} necesita como minimo {necessary_args} argumentos")
         except Exception as e:
@@ -453,7 +453,7 @@ class MinecraftFramework:
 
                     # Se obtiene el método asociado al comando y sus parámetros.
                     method, params = self.commands[cmd]
-                    args_correct, necessary_args = method_execution(method, params, args)
+                    args_correct, necessary_args, ret = method_execution(method, params, args)
                     if not args_correct:
                         error = f"ERROR: El comando {cmd} necesita como minimo {necessary_args} argumentos"
                         self.__print_info(error)
@@ -464,7 +464,7 @@ class MinecraftFramework:
             # Esperar medio segundo para no saturar el servidor.
             time.sleep(0.5)
 
-def method_execution(method, params, args) -> tuple[bool, int]:
+def method_execution(method, params, args) -> tuple[bool, int, any]:
     """
     Ejecuta un método con los argumentos especificados, según los parámetros que acepta.
 
@@ -472,14 +472,14 @@ def method_execution(method, params, args) -> tuple[bool, int]:
     :param params: Parámetros del método.
     :param args: Argumentos que se pasan al método.
 
-    :return: Tupla con un booleano que indica si el número de argumentos es correcto (True) o no (False)
-    y el número mínimo de argumentos necesarios.
+    :return: Tupla con un booleano que indica si el número de argumentos es correcto (True) o no (False),
+    el número mínimo de argumentos necesarios y el objeto devuelto por el método.
     """
     # Si el método no tiene parámetros se ejecuta directamente, ignorando los argumentos
     # que haya escrito el jugador.
     if len(params) == 0:
-        method()
-        return True, 0
+        ret = method()
+        return True, 0, ret
     else:
         # Si tiene parámetros, hay que comprovar que el número de argumentos sea
         # correcto, según si el método tiene *args o no.
@@ -493,13 +493,13 @@ def method_execution(method, params, args) -> tuple[bool, int]:
         if len(args) >= necessary_args:
             if has_param_args:
                 # Si el método tiene *args, se pasan todos los argumentos.
-                method(*args)
+                ret = method(*args)
             else:
                 # Si no, se pasan solo los argumentos necesarios, ignorando los argumentos
                 # adicionales que haya escrito el jugador.
-                method(*args[:necessary_args])
+                ret = method(*args[:necessary_args])
             
-            return True, necessary_args
+            return True, necessary_args, ret
         else:
-            return False, necessary_args
+            return False, necessary_args, None
     
