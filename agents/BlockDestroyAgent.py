@@ -1,6 +1,5 @@
 import random
 from framework.MinecraftAgentFramework import MinecraftAgent, executable
-import framework.mcpi.block as block
 
 
 class BlockDestroyAgent(MinecraftAgent):

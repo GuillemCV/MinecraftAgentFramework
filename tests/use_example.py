@@ -1,6 +1,5 @@
-from framework.MinecraftAgentFramework import MinecraftAgent, MinecraftFramework
-import framework.mcpi.minecraft as minecraft
-import framework.mcpi.block as block
+from framework.MinecraftAgentFramework import MinecraftFramework
+import mcpi.minecraft as minecraft
 from agents.InsultAgent import InsultAgent
 from agents.OracleAgent import OracleAgent
 from agents.RandomTpAgent import RandomTpAgent

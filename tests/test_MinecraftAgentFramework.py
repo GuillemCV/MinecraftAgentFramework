@@ -1,7 +1,7 @@
 import unittest
 from framework.MinecraftAgentFramework import *
-from framework.mcpi.minecraft import Minecraft
-import framework.mcpi.block as block
+from mcpi.minecraft import Minecraft
+import mcpi.block as block
 
 
 class TestMinecraftAgentFramework(unittest.TestCase):

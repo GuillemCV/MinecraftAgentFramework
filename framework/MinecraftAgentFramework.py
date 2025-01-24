@@ -1,8 +1,8 @@
 import datetime
 import time
 import inspect
-from .mcpi import block
-from .mcpi.minecraft import Minecraft
+from mcpi import block
+from mcpi.minecraft import Minecraft
 
 
 def executable(method):

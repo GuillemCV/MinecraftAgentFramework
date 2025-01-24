@@ -39,7 +39,7 @@ jobs:
 
       # 5. Ejecutar los tests con cobertura
       - name: Run tests with coverage
-        run: pytest --cov=agents/ --cov=framework/MinecraftAgentFramework.py tests/
+        run: pytest --cov=agents/ --cov=framework/ tests/
 
       # 6. Subir los resultados de cobertura a Codecov
       - name: Upload coverage to Codecov
