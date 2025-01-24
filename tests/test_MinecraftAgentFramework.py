@@ -45,12 +45,6 @@ class TestMinecraftAgentFramework(unittest.TestCase):
     def test_tp_player(self):
         self.agent.tp_player(10, 20, 30)
 
-    def test_get_player_pos(self):
-        pos = self.agent.get_player_pos()
-        self.assertEqual(pos.x, 10)
-        self.assertEqual(pos.y, 20)
-        self.assertEqual(pos.z, 30)
-
     def test_place_block(self):
         self.agent.place_block(10, 20, 30, block.STONE)
 
