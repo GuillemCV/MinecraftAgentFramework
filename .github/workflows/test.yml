@@ -26,7 +26,7 @@ jobs:
       # 3. Instalar el paquete y sus dependencias usando setup.py
       - name: Install dependencies
         run: |
-          pip install .[dev]  # Instala el paquete con dependencias de desarrollo
+          pip install -e .[dev]  # Instala el paquete con dependencias de desarrollo
 
       # 4. Descargar y configurar el servidor de Minecraft
       - name: Set up Minecraft Server
