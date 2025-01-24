@@ -1,5 +1,5 @@
 import unittest
-from framework.MinecraftAgentFramework import *
+from framework.MinecraftAgentFramework import MinecraftAgent, MinecraftFramework, executable, command
 from mcpi.minecraft import Minecraft
 import mcpi.block as block
 
