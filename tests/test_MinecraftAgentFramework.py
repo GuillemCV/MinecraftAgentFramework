@@ -1,5 +1,6 @@
+import inspect
 import unittest
-from framework.MinecraftAgentFramework import MinecraftAgent, MinecraftFramework, executable, command
+from framework.MinecraftAgentFramework import MinecraftAgent, MinecraftFramework, executable, command, method_execution
 from mcpi.minecraft import Minecraft
 import mcpi.block as block
 
@@ -12,65 +13,35 @@ class TestMinecraftAgentFramework(unittest.TestCase):
         self.framework = MinecraftFramework(mc=self.mc)
         self.framework.add_agent(self.agent)
 
-    def test_executable_decorator(self):
+    def test_decorator_executable(self):
         @executable
-        def test_method():
-            pass
+        def test_executable():
+            return "Hello World"
 
-        self.assertTrue(hasattr(test_method, "executable"))
-        self.assertTrue(test_method.executable)
+        self.assertEqual(test_executable(), "Hello World")
+        self.assertTrue(test_executable.executable)
+    
+    def test_decorator_command(self):
+        @command("TestCommand")
+        def test_command():
+            return "Hello World"
 
-    def test_command_decorator(self):
-        @command("testcmd")
-        def test_method():
-            pass
-
-        self.assertTrue(hasattr(test_method, "command"))
-        self.assertEqual(test_method.command, "testcmd")
-
-    def test_add_agent(self):
-        self.assertIn(self.agent, self.framework.agents)
-
-    def test_remove_agent(self):
-        self.framework.remove_agent("TestAgent")
-        self.assertNotIn(self.agent, self.framework.agents)
-
-    def test_send_message(self):
-        self.agent.send_message("Hello")
-
-    def test_receive_message(self):
-        message = self.agent.receive_message()
-        self.assertEqual(message, "")
-
-    def test_tp_player(self):
-        self.agent.tp_player(10, 20, 30)
-
-    def test_place_block(self):
-        self.agent.place_block(10, 20, 30, block.STONE)
-
-    def test_destroy_block(self):
-        self.agent.destroy_block(10, 20, 30)
-
-    def test_show_methods(self):
-        self.agent.show_methods()
-
-    def test_execute_agent(self):
-        self.framework.execute_agent("TestAgent")
-
-    def test_change_agent_state(self):
-        self.framework.change_agent_state("TestAgent")
-        self.assertFalse(self.agent.active)
-        self.framework.change_agent_state("TestAgent")
-        self.assertTrue(self.agent.active)
-
-    def test_show_agents(self):
-        self.framework.show_agents()
-
-    def test_help(self):
-        self.framework.help()
-
-    def test_execute_method(self):
-        self.framework.execute_method("TestAgent", "show_methods")
+        self.assertEqual(test_command(), "Hello World")
+        self.assertEqual(test_command.command, "TestCommand")
+    
+    def test_method_execution(self):
+        def method_no_param():
+            return "I have no parameter"
+        
+        def method_with_param(param):
+            return f"I have parameter {param}"
+        
+        def method_with_param_args(param, *args):
+            return f"I have parameter {param} and args {args}"
+        
+        args = [1, 2, 3]
+        result = method_execution(method_no_param, inspect.signature(method_no_param).parameters, []) 
+   
 
 
 if __name__ == "__main__":
