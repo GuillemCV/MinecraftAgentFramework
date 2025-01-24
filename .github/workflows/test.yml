@@ -1,0 +1,48 @@
+name: Python CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Descargar el código fuente del repositorio
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      # 2. Configurar Python
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.10
+
+      # 3. Instalar el paquete y sus dependencias usando setup.py
+      - name: Install dependencies
+        run: |
+          pip install .[dev]  # Instala el paquete con dependencias de desarrollo
+
+      # 4. Descargar y configurar el servidor de Minecraft
+      - name: Set up Minecraft Server
+        run: |
+          git clone https://github.com/AdventuresInMinecraft/AdventuresInMinecraft-Linux.git minecraft_server
+          cd minecraft_server/Server
+          chmod +x start.sh
+          ./start.sh &  # Inicia el servidor en segundo plano
+          sleep 15  # Espera a que el servidor arranque correctamente
+
+      # 5. Ejecutar los tests con cobertura
+      - name: Run tests with coverage
+        run: pytest --cov=MinecraftAgentFramework tests/
+
+      # 6. Subir los resultados de cobertura a Codecov
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}

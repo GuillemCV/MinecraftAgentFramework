@@ -7,4 +7,11 @@ setup(
     include_package_data=True,  # Incluye __init__.py automáticamente
     install_requires=[],  # Agrega dependencias aquí si es necesario
     author="Guillem Casares Valencia",
+    extras_require={
+        "dev": [
+            "pytest",
+            "pytest-cov",
+            "codecov",
+        ]
+    }
 )
