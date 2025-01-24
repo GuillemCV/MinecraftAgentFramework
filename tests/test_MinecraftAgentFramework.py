@@ -39,8 +39,12 @@ class TestMinecraftAgentFramework(unittest.TestCase):
         def method_with_param_args(param, *args):
             return f"I have parameter {param} and args {args}"
         
-        args = [1, 2, 3]
-        result = method_execution(method_no_param, inspect.signature(method_no_param).parameters, []) 
+        def method_no_return():
+            print("I have no return")
+        
+        result = method_execution(method_no_return, {}, [])
+        # de que tipo es return
+        print(result)
    
 
 
