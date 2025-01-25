@@ -30,6 +30,8 @@ class TestMinecraftAgentFramework(unittest.TestCase):
             print("Usando Mock para mc.player.getTilePos")
 
 
+    # Test de TntAgent:
+    
     def test_main_execute_with_valid_arguments(self):
         # self.tnt_agent.place_tnt = MagicMock()
 

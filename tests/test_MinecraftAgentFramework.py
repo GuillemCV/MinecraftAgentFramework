@@ -145,6 +145,7 @@ class TestMinecraftAgentFramework(unittest.TestCase):
         self.assertTrue(True)
 
     def test_execute(self):
+        self.agent.main_execute = MinecraftAgent.main_execute
         self.agent.execute([])
         self.assertTrue(True)
 
