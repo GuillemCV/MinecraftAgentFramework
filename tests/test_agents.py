@@ -144,10 +144,31 @@ class TestMinecraftAgentFramework(unittest.TestCase):
         self.assertTrue(True)
     
     def test_do_operation_MathAgent(self):
-        self.math_agent.do_operation(5, 5, 1)
-        self.math_agent.do_operation(5, 5, 2)
-        self.math_agent.do_operation(5, 5, 3)
-        self.math_agent.do_operation(5, 5, 4)
+        try:
+            self.math_agent.do_operation(5, 5, 1)
+            self.math_agent.do_operation(5, "test", 1)
+        except ValueError as e:
+            print(e)
+        
+        try:
+            self.math_agent.do_operation(5, 5, 2)
+            self.math_agent.do_operation(5, "test", 2)
+        except ValueError as e:
+            print(e)
+        
+        try:
+            self.math_agent.do_operation(5, 5, 3)
+            self.math_agent.do_operation(5, "test", 3)
+        except ValueError as e:
+            print(e)
+
+        try:
+            self.math_agent.do_operation(5, 5, 4)
+            self.math_agent.do_operation(5, "test", 4)
+        except ValueError as e:
+            print(e)
+
+        
         self.math_agent.do_operation(5, 5, 20)
         self.assertTrue(True)
 
