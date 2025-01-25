@@ -79,24 +79,14 @@ class TestMinecraftAgentFramework(unittest.TestCase):
         result = method_execution(method_no_param, {}, [])
         self.assertEqual(result, (True, 0, "I have no parameter"))
 
-        result = method_execution(
-            method_with_param, inspect.signature(method_with_param).parameters, ["Test"]
-        )
+        result = method_execution(method_with_param, inspect.signature(method_with_param).parameters, ["Test"])
         self.assertEqual(result, (True, 1, "I have parameter Test"))
 
-        result = method_execution(
-            method_with_param, inspect.signature(method_with_param).parameters, []
-        )
+        result = method_execution(method_with_param, inspect.signature(method_with_param).parameters, [])
         self.assertEqual(result, (False, 1, None))
 
-        result = method_execution(
-            method_with_param_args,
-            inspect.signature(method_with_param_args).parameters,
-            ["Test", "Arg1", "Arg2"],
-        )
-        self.assertEqual(
-            result, (True, 1, "I have parameter Test and args ('Arg1', 'Arg2')")
-        )
+        result = method_execution(method_with_param_args, inspect.signature(method_with_param_args).parameters, ["Test", "Arg1", "Arg2"])
+        self.assertEqual(result, (True, 1, "I have parameter Test and args ('Arg1', 'Arg2')"))
 
     # Tests de MinecraftAgent:
 
@@ -124,7 +114,8 @@ class TestMinecraftAgentFramework(unittest.TestCase):
         self.assertEqual(msg, "")
 
     def test_tp_player(self):
-        self.agent.tp_player(0, 0, 0)
+        pos = self.agent.get_player_pos()
+        self.agent.tp_player(pos.x, pos.y + 10, pos.z)
         self.assertTrue(True)
 
     def test_get_player_pos(self):
@@ -133,11 +124,13 @@ class TestMinecraftAgentFramework(unittest.TestCase):
         self.assertTrue(True)
 
     def test_place_block(self):
-        self.agent.place_block(0, 0, 0, block.STONE)
+        pos = self.agent.get_player_pos()
+        self.agent.place_block(pos.x, pos.y + 2, pos.z, block.STONE)
         self.assertTrue(True)
 
     def test_destroy_block(self):
-        self.agent.destroy_block(0, 0, 0)
+        pos = self.agent.get_player_pos()
+        self.agent.destroy_block(pos.x, pos.y - 1, pos.z)
         self.assertTrue(True)
 
     def test_show_methods(self):
