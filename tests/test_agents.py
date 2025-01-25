@@ -14,15 +14,20 @@ class TestMinecraftAgentFramework(unittest.TestCase):
 
     def setUp(self):
         self.mc = Minecraft.create()
-        # Mockear el método getTilePos para que no se ejecute realmente, pero que se pueda llamar.
-        # Ya que desde Github Actions no se puede ejecutar Minecraft y fallaría.
-        self.mc.player.getTilePos = MagicMock() 
         self.tnt_agent = TntAgent(name="TntAgent", active=True, mc=self.mc)
         self.insult_agent = InsultAgent(name="InsultAgent", active=True, mc=self.mc)
         self.oracle_agent = OracleAgent(name="OracleAgent", active=True, mc=self.mc)
         self.random_tp_agent = RandomTpAgent(name="RandomTpAgent", active=True, mc=self.mc)
         self.block_destroyer = BlockDestroyAgent(name="BlockDestroyAgent", active=True, mc=self.mc)
         self.math_agent = MathAgent(name="MathAgent", active=True, mc=self.mc)
+
+        # Comprovamos si hay algun jugador conectado, si no hay, se usa Mock.
+        try:
+            # Si no hay ningún jugador conectado lanzará una excepción.
+            self.mc.player.getTilePos()
+        except Exception as e:
+            self.mc.player.getTilePos = MagicMock()
+            print("Usando Mock para mc.player.getTilePos")
 
 
     def test_main_execute_with_valid_arguments(self):

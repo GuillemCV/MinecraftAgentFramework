@@ -42,6 +42,14 @@ class TestMinecraftAgentFramework(unittest.TestCase):
         self.framework = MinecraftFramework(mc=self.mc)
         self.framework.add_agent(self.agent)
 
+        # Comprovamos si hay algun jugador conectado, si no hay, se usa Mock.
+        try:
+            # Si no hay ningún jugador conectado lanzará una excepción.
+            self.mc.player.getTilePos()
+        except Exception as e:
+            self.mc.player.getTilePos = MagicMock()
+            print("Usando Mock para mc.player.getTilePos")
+
     def test_decorator_executable(self):
         @executable
         def test_executable():
@@ -120,19 +128,9 @@ class TestMinecraftAgentFramework(unittest.TestCase):
         self.assertTrue(True)
 
     def test_get_player_pos(self):
-        try:
-            # Si hay algún jugador conectado, se obtiene su posición
-            pos = self.agent.get_player_pos()
-            print(pos)
-            self.assertTrue(True)
-        except Exception as e:
-            # Si no hay ningún jugador conectado fallará.
-            # Mockear el método getTilePos para que no se ejecute realmente, pero que se pueda llamar.
-            # Ya que desde Github Actions no se puede ejecutar Minecraft y fallaría.
-            self.mc.player.getTilePos = MagicMock()
-            self.agent.get_player_pos()
-            print(e)
-            self.assertTrue(True)
+        pos = self.agent.get_player_pos()
+        print(pos)
+        self.assertTrue(True)
 
     def test_place_block(self):
         self.agent.place_block(0, 0, 0, block.STONE)
@@ -235,10 +233,16 @@ class TestMinecraftAgentFramework(unittest.TestCase):
         self.assertTrue(True)
 
     def test_execute_method(self):
+        self.framework.execute_method("TestAgent2", "test", "Hello World")
+        self.framework.change_agent_state("TestAgent")
+        self.framework.execute_method("TestAgent", "test", "Hello World")
+        self.framework.change_agent_state("TestAgent")
+        self.framework.execute_method("TestAgent", "test", 1)
         self.framework.execute_method("TestAgent", "show_methods")
         self.framework.execute_method("TestAgent", "execute")
         self.framework.execute_method("TestAgent", "test_executable", "Hello World")
         self.framework.execute_method("TestAgent", "test_executable", 1)
+        self.framework.execute_method("TestAgent", "test_executable")
 
         self.assertTrue(True)
 
