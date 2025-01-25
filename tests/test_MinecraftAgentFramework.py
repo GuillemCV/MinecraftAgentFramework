@@ -145,6 +145,8 @@ class TestMinecraftAgentFramework(unittest.TestCase):
         self.assertTrue(True)
 
     def test_execute(self):
+        # Se sobreescribe el método main_execute por el
+        # método main_execute de la clase MinecraftAgent
         self.agent.main_execute = MinecraftAgent.main_execute
         self.agent.execute([])
         self.assertTrue(True)
