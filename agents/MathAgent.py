@@ -10,56 +10,11 @@ class MathAgent(MinecraftAgent):
 
     # Sobreescribir el método main_execute:
     def main_execute(self, *args):
-        # Mostramos las operaciones disponibles
-        self.show_ops()
-
-        # Bucle hasta que el jugador escoja una operación
-        while True:
-            # Se obtiene la respuesta del jugador
-            op_num = self.receive_message()
-
-            if not op_num == "":
-                try:
-                    op_num = int(op_num)
-                    if 1 <= op_num <= 4:
-                        break
-                    else:
-                        self.send_message("Por favor, escoge un numero entre 1 y 4")
-                except ValueError:
-                    self.send_message("Por favor, escribe un numero entero")
-
-            # Esperamos medio segundo
-            time.sleep(0.5)
-
-        # Le pedimos al jugador que introduzca dos números enteros
+        self.show_ops() # Mostramos las operaciones disponibles
+        op_num = self.choose_op() # El jugador escoge una operación
         self.send_message("Introduce dos numeros enteros separados por un espacio:")
-
-        # Bucle hasta que el jugador introduzca dos números enteros
-        while True:
-            # Se obtiene el primer número
-            nums = self.receive_message()
-
-            if not nums == "":
-                try:
-                    a, b = nums.split(" ")
-                    a = int(a)
-                    b = int(b)
-                    break
-                except ValueError:
-                    self.send_message("Por favor, escribe dos numeros enteros separados por un espacio")
-
-            # Esperamos medio segundo
-            time.sleep(0.5)
-
-        # Realizamos la operación escogida
-        if op_num == 1:
-            self.sum(a, b)
-        elif op_num == 2:
-            self.subs(a, b)
-        elif op_num == 3:
-            self.mult(a, b)
-        elif op_num == 4:
-            self.div(a, b)
+        a, b = self.write_numbers() # El jugador introduce dos números enteros
+        self.do_operation(a, b, op_num) # Realizamos la operación escogida
 
     # Definir otros métodos si es necesario, para ser llamados desde main_execute i/o
     # ser ejecutados mediante comandos des del chat del juego (decorator @executable):
@@ -73,6 +28,69 @@ class MathAgent(MinecraftAgent):
         self.send_message("Escoge la operacion que quieras realizar:")
         for op in ops:
             self.send_message(op)
+    
+    def choose_op(self) -> int:
+        """
+        Pide al jugador que escoja una operación matemática.
+
+        """
+        # Bucle hasta que el jugador escoja una operación
+        while True:
+            # Se obtiene la respuesta del jugador
+            op_num = self.receive_message()
+
+            if not op_num == "":
+                try:
+                    op_num = int(op_num)
+                    if 1 <= op_num <= 4:
+                        return op_num
+                    else:
+                        self.send_message("Por favor, escoge un numero entre 1 y 4")
+                except ValueError:
+                    self.send_message("Por favor, escribe un numero entero")
+
+            # Esperamos medio segundo
+            time.sleep(0.5)
+    
+    def write_numbers(self) -> tuple:
+        """
+        Pide al jugador que introduzca dos números enteros.
+
+        """
+        # Bucle hasta que el jugador introduzca dos números enteros
+        while True:
+            # Se obtiene el primer número
+            nums = self.receive_message()
+
+            if not nums == "":
+                try:
+                    a, b = nums.split(" ")
+                    a = int(a)
+                    b = int(b)
+                    return a, b
+                except ValueError:
+                    self.send_message("Por favor, escribe dos numeros enteros separados por un espacio")
+
+            # Esperamos medio segundo
+            time.sleep(0.5)
+    
+    def do_operation(self, a, b, op):
+        """
+        Realiza la operación matemática escogida por el jugador.
+
+        :param a: Primer número
+        :param b: Segundo número
+        :param op: Operación a realizar
+
+        """
+        if op == 1:
+            return self.sum(a, b)
+        elif op == 2:
+            return self.subs(a, b)
+        elif op == 3:
+            return self.mult(a, b)
+        elif op == 4:
+            return self.div(a, b)
 
     @executable
     def sum(self, a, b):
