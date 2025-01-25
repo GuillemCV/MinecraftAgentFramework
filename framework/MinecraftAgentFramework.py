@@ -1,6 +1,7 @@
 import datetime
 import time
 import inspect
+from abc import ABC, abstractmethod
 from mcpi import block
 from mcpi.minecraft import Minecraft
 
@@ -19,9 +20,9 @@ def executable(method):
     # Se devuelve el método original.
     return method
 
-class MinecraftAgent:
+class MinecraftAgent(ABC):
     """
-    Clase base de la que heredan todos los agentes de Minecraft.
+    Clase base abstracta de la que heredan todos los agentes de Minecraft.
     """
 
     def __init__(self, name: str, active: bool, info: str, mc: Minecraft):
@@ -166,6 +167,7 @@ class MinecraftAgent:
         """
         self.send_message("Ejecutando...")
 
+    @abstractmethod
     def main_execute(self, *args):
         """
         Método principal de la ejecución del agente.

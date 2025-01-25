@@ -4,13 +4,34 @@ from framework.MinecraftAgentFramework import MinecraftAgent, MinecraftFramework
 from mcpi.minecraft import Minecraft
 import mcpi.block as block
 
+class AgentTest(MinecraftAgent):
+    def __init__(self, name, active, mc):
+        info = "Test Agent"
+        super().__init__(name, active, info, mc)
+    
+    def main_execute(self, *args):
+        if len(args) < 1:
+            raise ValueError("Se necesita al menos un argumento")
+        
+        self.send_message("Ejecutado con argumentos: ")
+        for arg in args:
+            self.send_message(arg)
+    
+    @executable
+    def test_executable(self, msg):
+        # Si no es un string, se lanza una excepción
+        if not isinstance(msg, str):
+            raise ValueError("El argumento debe ser un string")
+        
+        self.send_message(msg)
+
 
 
 class TestMinecraftAgentFramework(unittest.TestCase):
 
     def setUp(self):
         self.mc = Minecraft.create()
-        self.agent = MinecraftAgent(name="TestAgent", active=True, info="Test Agent", mc=self.mc)
+        self.agent = AgentTest(name="TestAgent", active=True, mc=self.mc)
         self.framework = MinecraftFramework(mc=self.mc)
         self.framework.add_agent(self.agent)
 
@@ -121,17 +142,17 @@ class TestMinecraftAgentFramework(unittest.TestCase):
         self.assertEqual(agents, None)
 
     def test_add_agent(self):
-        agent = MinecraftAgent(name="TestAgent2", active=True, info="Test Agent 2", mc=self.mc)
+        agent = AgentTest(name="TestAgent2", active=True, mc=self.mc)
         self.framework.add_agent(agent)
         self.assertEqual(len(self.framework.agents), 2)
         self.assertNotEqual(self.framework.search_agent("TestAgent2"), None)
 
-        agent = MinecraftAgent(name="TestAgent", active=True, info="Test Agent", mc=self.mc)
+        agent = AgentTest(name="TestAgent", active=True, mc=self.mc)
         self.framework.add_agent(agent)
         self.assertEqual(len(self.framework.agents), 2)
 
     def test_remove_agent(self):
-        self.framework.add_agent(MinecraftAgent(name="TestAgent2", active=True, info="Test Agent 2", mc=self.mc))
+        self.framework.add_agent(AgentTest(name="TestAgent2", active=True, mc=self.mc))
         self.assertEqual(len(self.framework.agents), 2)
         self.framework.remove_agent("TestAgent232")
         self.assertEqual(len(self.framework.agents), 2)
@@ -174,6 +195,7 @@ class TestMinecraftAgentFramework(unittest.TestCase):
     
     def test_execute_agent(self):
         self.framework.execute_agent("TestAgent")
+        self.framework.execute_agent("TestAgent", "Test")
         self.framework.execute_agent("TestAgentNotExists")
 
         self.framework.change_agent_state("TestAgent")
@@ -184,6 +206,8 @@ class TestMinecraftAgentFramework(unittest.TestCase):
     def test_execute_method(self):
         self.framework.execute_method("TestAgent", "show_methods")
         self.framework.execute_method("TestAgent", "execute")
+        self.framework.execute_method("TestAgent", "test_executable", "Hello World")
+        self.framework.execute_method("TestAgent", "test_executable", 1)
 
         self.assertTrue(True)
 
