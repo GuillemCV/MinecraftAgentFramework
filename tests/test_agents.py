@@ -168,7 +168,6 @@ class TestMinecraftAgentFramework(unittest.TestCase):
         except ValueError as e:
             print(e)
 
-        
         self.math_agent.do_operation(5, 5, 20)
         self.assertTrue(True)
 
