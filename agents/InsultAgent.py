@@ -33,7 +33,7 @@ class InsultAgent(MinecraftAgent):
 
         """
 
-        return self.send_message(random.choice(self.insults))
+        self.send_message(random.choice(self.insults))
 
     # Se define una lista de insultos
     insults = [

@@ -52,7 +52,7 @@ class TestMinecraftAgentFramework(unittest.TestCase):
         result = method_execution(method_with_param_args, inspect.signature(method_with_param_args).parameters, ["Test", "Arg1", "Arg2"])
         self.assertEqual(result, (True, 1, "I have parameter Test and args ('Arg1', 'Arg2')"))
 
-    # Test de MinecraftAgent:
+    # Tests de MinecraftAgent:
 
     def test_MinecraftAgent_init(self):
         self.assertEqual(self.agent.name, "TestAgent")
@@ -97,6 +97,13 @@ class TestMinecraftAgentFramework(unittest.TestCase):
     def test_execute(self):
         self.agent.execute([])
         self.assertTrue(True)
+    
+    # Tests de MinecraftFramework:
+
+    def test_MinecraftFramework_init(self):
+        self.assertEqual(self.framework.mc, self.mc)
+        self.assertNotEqual(self.framework.agents, [])
+        self.assertNotEqual(self.framework.commands, {})
 
 
 if __name__ == "__main__":
