@@ -75,6 +75,14 @@ class TestMinecraftAgentFramework(unittest.TestCase):
 
     # Tests de MinecraftAgent:
 
+    def test_instanciate_MinecraftAgent(self):
+        try:
+            agent = MinecraftAgent("TestAgent", True, "Test Agent", self.mc)
+            self.assertTrue(False)
+        except Exception as e:
+            print(e)
+            self.assertTrue(True)
+
     def test_MinecraftAgent_init(self):
         self.assertEqual(self.agent.name, "TestAgent")
         self.assertTrue(self.agent.active)
