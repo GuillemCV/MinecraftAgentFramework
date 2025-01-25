@@ -131,8 +131,62 @@ class TestMinecraftAgentFramework(unittest.TestCase):
         self.assertEqual(len(self.framework.agents), 2)
 
     def test_remove_agent(self):
+        self.framework.add_agent(MinecraftAgent(name="TestAgent2", active=True, info="Test Agent 2", mc=self.mc))
+        self.assertEqual(len(self.framework.agents), 2)
+        self.framework.remove_agent("TestAgent232")
+        self.assertEqual(len(self.framework.agents), 2)
+        self.framework.remove_agent("TestAgent2")
+        self.assertEqual(len(self.framework.agents), 1)
+    
+    def test_say_hi(self):
+        self.framework.say_hi()
         self.framework.remove_agent("TestAgent")
-        self.assertEqual(len(self.framework.agents), 0)
+        self.framework.say_hi()
+        self.assertTrue(True)
+    
+    def test_show_agents(self):
+        self.framework.show_agents()
+        self.framework.remove_agent("TestAgent")
+        self.framework.show_agents()
+        self.assertTrue(True)
+    
+    def test_help(self):
+        self.framework.help()
+        self.assertTrue(True)
+    
+    def test_change_agent_state(self):
+        self.framework.change_agent_state("TestAgent")
+        self.assertFalse(self.framework.search_agent("TestAgent").active)
+        self.framework.change_agent_state("TestAgent")
+        self.assertTrue(self.framework.search_agent("TestAgent").active)
+
+        self.framework.change_agent_state("TestAgent2")
+    
+    def test_show_methods(self):
+        self.framework.show_methods("TestAgent")
+        self.framework.show_methods("TestAgent2")
+        self.assertTrue(True)
+
+    def test_show_info(self):
+        self.framework.show_info("TestAgent")
+        self.framework.show_info("TestAgent2")
+        self.assertTrue(True)
+    
+    def test_execute_agent(self):
+        self.framework.execute_agent("TestAgent")
+        self.framework.execute_agent("TestAgentNotExists")
+
+        self.framework.change_agent_state("TestAgent")
+        self.framework.execute_agent("TestAgent")
+
+        self.assertTrue(True)
+
+    def test_execute_method(self):
+        self.framework.execute_method("TestAgent", "show_methods")
+        self.framework.execute_method("TestAgent", "execute")
+
+        self.assertTrue(True)
+
 
 
 if __name__ == "__main__":
