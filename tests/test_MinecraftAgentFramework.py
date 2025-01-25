@@ -104,6 +104,35 @@ class TestMinecraftAgentFramework(unittest.TestCase):
         self.assertEqual(self.framework.mc, self.mc)
         self.assertNotEqual(self.framework.agents, [])
         self.assertNotEqual(self.framework.commands, {})
+    
+    def test_write_chat(self):
+        self.framework.write_chat("Hello World")
+        self.assertTrue(True)
+
+    def test_read_chat(self):
+        msg = self.framework.read_chat()
+        self.assertEqual(msg, "")
+
+    def test_search_agents(self):
+        agents = self.framework.search_agent("TestAgent")
+        self.assertNotEqual(agents, None)
+
+        agents = self.framework.search_agent("TestAgent2")
+        self.assertEqual(agents, None)
+
+    def test_add_agent(self):
+        agent = MinecraftAgent(name="TestAgent2", active=True, info="Test Agent 2", mc=self.mc)
+        self.framework.add_agent(agent)
+        self.assertEqual(len(self.framework.agents), 2)
+        self.assertNotEqual(self.framework.search_agent("TestAgent2"), None)
+
+        agent = MinecraftAgent(name="TestAgent", active=True, info="Test Agent", mc=self.mc)
+        self.framework.add_agent(agent)
+        self.assertEqual(len(self.framework.agents), 2)
+
+    def test_remove_agent(self):
+        self.framework.remove_agent("TestAgent")
+        self.assertEqual(len(self.framework.agents), 0)
 
 
 if __name__ == "__main__":
