@@ -13,16 +13,46 @@ Minecraft Agent Framework es un framework para crear, gestionar y ejecutar agent
 
 1. Clona el repositorio del servidor de AdventuresInMinecraft según el sistema operativo que estés utilizando:
     - [Windows]:
-```sh 
-git clone https://github.com/AdventuresInMinecraft/AdventuresInMinecraft-PC.git minecraft_server ```
+    ```sh 
+    git clone https://github.com/AdventuresInMinecraft/AdventuresInMinecraft-PC.git minecraft_server
+    ```
 
     - [Linux]: 
-```sh 
-git clone https://github.com/AdventuresInMinecraft/AdventuresInMinecraft-Linux.git minecraft_server ```
+    ```sh 
+    git clone https://github.com/AdventuresInMinecraft/AdventuresInMinecraft-Linux.git minecraft_server
+    ```
 
     - [MacOS]:
-```sh
-git clone https://github.com/AdventuresInMinecraft/AdventuresInMinecraft-Mac.git minecraft_server ```
+    ```sh
+    git clone https://github.com/AdventuresInMinecraft/AdventuresInMinecraft-Mac.git minecraft_server
+    ```
+2. Clona el repositorio MinecraftAgentFramework:
+    ```sh
+    git clone https://github.com/GuillemCV/MinecraftAgentFramework.git
+    ```
+3. Instalar las dependencias:
+    ```sh
+    pip install -e .[dev]
+    ```
+4. Iniciar el servidor de AdventuresInMinecraft:
+   
+    Ejecutar el script StartServer, que se encuentra en el repositorio clonado en el 1r paso, y esperar a que el servidor termine de iniciarse.
+6. Iniciar Minecraft Java Edition versión 1.12 y conectarse al servidor:
+   
+    Para ello hay que crear un nuevo servidor en el apartado de "Multijugador", cuya dirección sea localhost, y conectarse a el.
+8. Ejecutar el programa use_example.py de la carpeta tests para comprovar que todo funcione correctamente.
 
-```sh
-git clone https://github.com/AdventuresInMinecraft/AdventuresInMinecraft-PC.git minecraft_server ```
+## Uso
+
+Para crear un agente, hereda de la clase MinecraftAgent y sobrescribe el método main_execute. También puedes definir métodos adicionales y decorarlos con @executable para que puedan ser ejecutados desde el chat de Minecraft. Ejemplo:
+   
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/69123fd6-ef78-4b0d-8fa3-895b3a187fb6" alt="create_agent" width="600">
+</p>
+
+
+
+
+
+   
+    
