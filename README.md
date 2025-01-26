@@ -39,7 +39,7 @@ Minecraft Agent Framework es un framework para crear, gestionar y ejecutar agent
     Ejecutar el script StartServer, que se encuentra en el repositorio clonado en el 1r paso, y esperar a que el servidor termine de iniciarse.
 6. Iniciar Minecraft Java Edition versión 1.12 y conectarse al servidor:
    
-    Para ello hay que crear un nuevo servidor en el apartado de "Multijugador", cuya dirección sea localhost, y conectarse a el.
+    Para ello, hay que crear un nuevo servidor en el apartado de "Multijugador", cuya dirección sea localhost, y conectarse a él.
 8. Ejecutar el programa use_example.py de la carpeta tests para comprovar que todo funcione correctamente.
 
 ## Uso
