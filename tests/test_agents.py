@@ -86,11 +86,14 @@ class TestMinecraftAgentFramework(unittest.TestCase):
         self.assertTrue(True)
     
     def test_check_question_number_OracleAgent(self):
-        self.oracle_agent.check_question_number("")
-        self.oracle_agent.check_question_number("test")
-        self.oracle_agent.check_question_number(50)
-        self.oracle_agent.check_question_number(5)
-        self.assertTrue(True)
+        ret = self.oracle_agent.check_question_number("")
+        self.assertFalse(ret)
+        ret = self.oracle_agent.check_question_number("test")
+        self.assertFalse(ret)
+        ret = self.oracle_agent.check_question_number(50)
+        self.assertFalse(ret)
+        ret = self.oracle_agent.check_question_number(5)
+        self.assertTrue(ret)
 
     # Test de RandomTpAgent:
 
@@ -170,11 +173,6 @@ class TestMinecraftAgentFramework(unittest.TestCase):
 
         self.math_agent.do_operation(5, 5, 20)
         self.assertTrue(True)
-
-
-        
-
-    
 
 
 if __name__ == "__main__":
