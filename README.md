@@ -32,7 +32,7 @@ Minecraft Agent Framework es un framework para crear, gestionar y ejecutar agent
     ```
 3. Instalar las dependencias:
     ```sh
-    pip install -e .[dev]
+    pip install -e .
     ```
 4. Iniciar el servidor de AdventuresInMinecraft:
    
