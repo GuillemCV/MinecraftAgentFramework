@@ -1,5 +1,5 @@
 from framework.MinecraftAgentFramework import MinecraftFramework
-import mcpi.minecraft as minecraft
+from mcpi.minecraft import Minecraft
 from agents.InsultAgent import InsultAgent
 from agents.OracleAgent import OracleAgent
 from agents.RandomTpAgent import RandomTpAgent
@@ -8,7 +8,7 @@ from agents.TntAgent import TntAgent
 from agents.BlockDestroyAgent import BlockDestroyAgent
 
 # Crear una instancia de Minecraft
-mc = minecraft.Minecraft.create()
+mc = Minecraft.create()
 
 # Crear una instancia del framework
 framework = MinecraftFramework(mc)
