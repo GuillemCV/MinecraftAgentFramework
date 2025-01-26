@@ -11,7 +11,7 @@ Minecraft Agent Framework es un framework para crear, gestionar y ejecutar agent
 
 ## Instalación
 
-1. Clona el repositorio del servidor de AdventuresInMinecraft según el sistema operativo que estés utilizando:
+1. Clonar el repositorio del servidor de AdventuresInMinecraft según el sistema operativo que estés utilizando:
     - [Windows]:
     ```sh 
     git clone https://github.com/AdventuresInMinecraft/AdventuresInMinecraft-PC.git minecraft_server
@@ -26,7 +26,7 @@ Minecraft Agent Framework es un framework para crear, gestionar y ejecutar agent
     ```sh
     git clone https://github.com/AdventuresInMinecraft/AdventuresInMinecraft-Mac.git minecraft_server
     ```
-2. Clona el repositorio MinecraftAgentFramework:
+2. Clonar el repositorio MinecraftAgentFramework:
     ```sh
     git clone https://github.com/GuillemCV/MinecraftAgentFramework.git
     ```
@@ -52,6 +52,22 @@ Ejemplo:
   <img src="https://github.com/user-attachments/assets/69123fd6-ef78-4b0d-8fa3-895b3a187fb6" alt="create_agent" width="600">
 </p>
 
+### Añadir agentes al framework y ejecutarlo
+Usa la libreria mcpi para crear una instancia de la clase Minecraft, que es la que permite la comunicación con el servidor. Luego crea una instancia de MinecraftFramework, crea instancias de tus agentes, añadelos al framework y ejecutalo.
+Ejemplo:
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/bc82c664-5b62-4c47-98a1-54f34fb62c75" alt="add_and_execute" width="600">
+</p>
+
+### Ejecutar comandos desde el chat de Minecraft
+Los comandos empiezan por el prefijo "af:", seguido del comando y de los argumentos necesarios, todo esto separado por espacios:
+        
+    af: comando [arg1] [arg2] ... [argN]
+
+Usa el comando "af: help" para ver todos los comandos disponibles y los argumentos que reciben.
+
+        
 
 
 
