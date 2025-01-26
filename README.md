@@ -53,7 +53,7 @@ Ejemplo:
 </p>
 
 ### Añadir agentes al framework y ejecutarlo
-Usa la libreria mcpi para crear una instancia de la clase Minecraft, que es la que permite la comunicación con el servidor. Luego crea una instancia de MinecraftFramework, crea instancias de tus agentes, añadelos al framework y ejecutalo.
+Usa la libreria mcpi para crear una instancia de la clase Minecraft, que es la que permite la comunicación con el servidor. Luego crea una instancia de MinecraftFramework, crea instancias de tus agentes, añádelos al framework y ejecútalo.
 Ejemplo:
 
 <p align="center">
