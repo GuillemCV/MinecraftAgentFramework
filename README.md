@@ -44,7 +44,9 @@ Minecraft Agent Framework es un framework para crear, gestionar y ejecutar agent
 
 ## Uso
 
-Para crear un agente, hereda de la clase MinecraftAgent y sobrescribe el método main_execute. También puedes definir métodos adicionales y decorarlos con @executable para que puedan ser ejecutados desde el chat de Minecraft. Ejemplo:
+### Crear un agente
+Para crear un agente, hereda de la clase MinecraftAgent y sobrescribe el método main_execute. También puedes definir métodos adicionales y decorarlos con @executable para que puedan ser ejecutados desde el chat de Minecraft. Para interactuar con el mundo de Minecraft hay que usar los métodos definidos en la clase MinecraftAgent. Hay que tener en cuenta que los métodos pensados para ser ejecutados mediante comandos a través del chat de Minecraft, como el método main_execute o cualquier método anotado con @executable, reciben sus argumentos como objetos de tipo str (string). Por lo que el programador deberá convertir los argumentos al tipo adecuado, lanzando una excepción en caso de error. Por último, mencionar que en estos métodos no se admite el parámetro **kwargs, para que acepten un número variable de argumentos hay que usar *args, como en el caso de main_execute. En este caso habrá que comprovar que el número de elementos en args sea igual al número de argumentos necessarios y lanzar una excepción en caso contrario.
+Ejemplo:
    
 <p align="center">
   <img src="https://github.com/user-attachments/assets/69123fd6-ef78-4b0d-8fa3-895b3a187fb6" alt="create_agent" width="600">
