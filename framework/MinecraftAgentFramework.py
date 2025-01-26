@@ -88,11 +88,11 @@ class MinecraftAgent(ABC):
         """
         self.mc.player.setTilePos(x, y, z)
 
-    def get_player_pos(self) -> tuple:
+    def get_player_pos(self):
         """
         Obtiene la posición actual del jugador.
 
-        :return: Tupla con las coordenadas X, Y, Z.
+        :return: Vector con las coordenadas x, y, z del jugador.
         """
         return self.mc.player.getTilePos()
 
