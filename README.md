@@ -13,11 +13,13 @@ Minecraft Agent Framework es un framework para crear, gestionar y ejecutar agent
 
 1. Clona el repositorio del servidor de AdventuresInMinecraft según el sistema operativo que estés utilizando:
     - [Windows]: 
-   ```sh git clone https://github.com/AdventuresInMinecraft/AdventuresInMinecraft-PC.git minecraft_server ```
+   ``` git clone https://github.com/AdventuresInMinecraft/AdventuresInMinecraft-PC.git minecraft_server ```
 
-    - [Linux](git clone https://github.com/AdventuresInMinecraft/AdventuresInMinecraft-Linux.git minecraft_server)
+    - [Linux]: 
+    ``` git clone https://github.com/AdventuresInMinecraft/AdventuresInMinecraft-Linux.git minecraft_server ```
 
-    - [MacOS](git clone https://github.com/AdventuresInMinecraft/AdventuresInMinecraft-Mac.git minecraft_server)
+    - [MacOS]:
+    ``` git clone https://github.com/AdventuresInMinecraft/AdventuresInMinecraft-Mac.git minecraft_server ```
 
 ```sh
 git clone https://github.com/AdventuresInMinecraft/AdventuresInMinecraft-PC.git minecraft_server
