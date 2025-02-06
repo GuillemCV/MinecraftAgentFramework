@@ -141,7 +141,8 @@ class MinecraftAgent(ABC):
 
         # Se muestra en el chat el nombre de los métodos y sus parámetros
         self.send_message("Metodos disponibles:")
-        [self.send_message(f"- {method}({params})") for method, params in zip(methods, methods_params)]
+        for method, params in zip(methods, methods_params):
+            self.send_message(f"- {method}({params})") 
 
     # Métodos para ejecutar un agente:
 
@@ -305,7 +306,8 @@ class MinecraftFramework:
             self.write_chat("No hay agentes activos disponibles")
         else:
             # Si hay agentes activos, se envía un mensaje desde cada uno.
-            [agent.send_message("Hola !!!") for agent in active_agents]
+            for agent in active_agents:
+                agent.send_message("Hola !!!") 
 
     @command("shagents")
     def show_agents(self):
@@ -318,7 +320,8 @@ class MinecraftFramework:
             self.write_chat("No hay agentes disponibles")
         else:
             name_active = map(lambda a: (a.name, "Activo") if a.active else (a.name, "Inactivo"), self.agents,)
-            [self.write_chat(f"- {name} ({status})") for name, status in name_active]
+            for name, active in name_active:
+                self.write_chat(f"- {name} ({active})")
 
     @command("help")
     def help(self):
