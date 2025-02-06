@@ -10,7 +10,7 @@ from unittest.mock import MagicMock
 
 
 
-class TestMinecraftAgentFramework(unittest.TestCase):
+class TestAgents(unittest.TestCase):
 
     def setUp(self):
         self.mc = Minecraft.create()

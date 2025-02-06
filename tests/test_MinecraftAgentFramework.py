@@ -133,7 +133,7 @@ class TestMinecraftAgentFramework(unittest.TestCase):
         self.agent.destroy_block(pos.x, pos.y - 1, pos.z)
         self.assertTrue(True)
 
-    def test_show_methods(self):
+    def test_show_methods_agent(self):
         self.agent.show_methods()
         self.assertTrue(True)
 
